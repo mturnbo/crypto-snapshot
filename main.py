@@ -16,6 +16,6 @@ if __name__ == '__main__':
         print("Invalid wallet name or address.")
         sys.exit(1)
 
-    wallet = Wallet(wallet_address, sys.argv[2].title(), sys.argv[1])
+    wallet = Wallet(sys.argv[2].title(), wallet_address, sys.argv[1])
     wallet.export_assets()
     wallet.show_assets()
