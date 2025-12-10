@@ -2,6 +2,7 @@ import os
 import sys
 import json
 from app.models.wallet import Wallet
+from app.models.exchange import Exchange
 
 addresses = {}
 file_path = os.path.join('config','addresses.json')
@@ -19,3 +20,6 @@ if __name__ == '__main__':
     wallet = Wallet(sys.argv[2].title(), wallet_address, sys.argv[1])
     wallet.export_assets()
     wallet.show_assets()
+
+    exchange = Exchange("Kraken")
+    exchange.show_assets()
