@@ -1,0 +1,16 @@
+{
+  "cardano": {
+    "hucknail": "addr1q9wgrgy30jr4q4kw9rhwyenk5eq8avmcaw0y5lsgwmzadqrpudry7dhccxr9cpqf0n7sxe4q8jhj74tjht7zxmk8fjaq4yu4r6",
+    "iman": "addr1q8tcpyk02357dwa5p46cwxkdcexdzf8u63ngqyvdffq0jl9wqzdk2ptn68yw9e4fjc4g7zqt0tfxl9w9xamznsl5f87s69dsp6",
+    "gru": "addr1qxahf5t64fvf5fnd25shfppjuy4dhgtckpcyr7xx9hd0f2m2vy5wcne9l5zda9qtcagjjr8sguydhjr2q8eljpywx4nsqku8rv"
+  },
+  "erc20": {
+    "tangem": "0xa24F6404A198809980f0E37fdafFf2f70f717adb",
+    "atomic": "0xbafB71A39A953b6aB6c87bA95bFD743538aC7cCD",
+    "xdefi": "0x5772de707efb053B414E81Be3b2fD5Aed7e1534a",
+    "ledgerx": "0x53D0592e407B0286737548F03a4717C3Bd4AbCD7"
+  },
+  "solana": {
+    "solflare": "F1Fqw6Naaw1rW2VaX77pUVVJr6mCTXC6VsP9gEhUsbqK"
+  }
+}

@@ -28,7 +28,7 @@ package-lock.json
 /.pnp
 .pnp.js
 
-### Build / Export###
+### Build / Export ###
 build/
 dist/
 export/
