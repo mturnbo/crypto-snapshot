@@ -2,6 +2,7 @@ import os
 import sys
 import json
 from app.models.wallet import Wallet
+from app.models.exchange import Exchange
 
 addresses = {}
 file_path = os.path.join('config','addresses.json')
@@ -16,6 +17,10 @@ if __name__ == '__main__':
         print("Invalid wallet name or address.")
         sys.exit(1)
 
-    wallet = Wallet(wallet_address, sys.argv[2].title(), sys.argv[1])
-    wallet.export_assets()
-    wallet.show_assets()
+    # wallet = Wallet(sys.argv[2].title(), wallet_address, sys.argv[1])
+    # wallet.export_assets()
+    # wallet.show_assets()
+
+    exchange = Exchange("Kraken")
+    exchange.show_assets()
+    exchange.export_assets()
