@@ -1,7 +1,7 @@
 from app.models.portfolio import Portfolio
-from app.utils.utils_cardano import get_wallet_assets as get_cardano_assets
-from app.utils.utils_erc20 import get_wallet_assets as get_erc20_assets
-from app.utils.utils_solana import get_wallet_assets as get_solana_assets
+from app.utils.wallets.utils_cardano import get_wallet_assets as get_cardano_assets
+from app.utils.wallets.utils_erc20 import get_wallet_assets as get_erc20_assets
+from app.utils.wallets.utils_solana import get_wallet_assets as get_solana_assets
 
 class Wallet(Portfolio):
     def __init__(self, name: str="", address: str="", blockchain: str="", type: str="wallet"):

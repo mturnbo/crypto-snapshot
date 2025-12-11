@@ -27,13 +27,13 @@ class Asset(Token):
         output.append({
             "title": "Price",
             "justification": "right",
-            "value": f"{self.price:.8f}",
+            "value": f"{self.price:.8f}" if self.price is not None else "N/A",
         })
-        total_value = self.balance * self.price
+        total_value = self.balance * self.price if self.price is not None else None
         output.append({
             "title": "Value",
             "justification": "right",
-            "value": f"${total_value:,.2f}",
+            "value": f"${total_value:,.2f}" if total_value is not None else "N/A",
         })
 
         return output

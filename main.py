@@ -17,9 +17,9 @@ if __name__ == '__main__':
         print("Invalid wallet name or address.")
         sys.exit(1)
 
-    wallet = Wallet(sys.argv[2].title(), wallet_address, sys.argv[1])
-    wallet.export_assets()
-    wallet.show_assets()
+    # wallet = Wallet(sys.argv[2].title(), wallet_address, sys.argv[1])
+    # wallet.export_assets()
+    # wallet.show_assets()
 
     exchange = Exchange("Kraken")
     exchange.show_assets()

@@ -1,7 +1,7 @@
-from kraken.spot import User
+from kraken.spot import User, Market
 from dotenv import load_dotenv
-from typing import List
 from app.models.asset import Asset
+from app.utils.util_price_data import get_token_prices
 import os
 
 load_dotenv()
@@ -10,14 +10,26 @@ API_KEY = os.getenv('KRAKEN_API_KEY')
 API_SECRET = os.getenv('KRAKEN_PRIVATE_KEY')
 
 def get_kraken_portfolio():
-    print(API_SECRET)
     try:
         user_client = User(key=API_KEY, secret=API_SECRET)
-        account_balance = user_client.get_account_balance()
+        portfolio = user_client.get_account_balance()
         assets = []
-        for asset, balance in account_balance.items():
+
+        tokens = list(portfolio.keys())
+        filtered_tokens = [token for token in tokens if '.' not in token]
+        prices = get_token_prices(filtered_tokens)
+
+        for asset, balance in portfolio.items():
             if float(balance) > 0:
-                assets.append(Asset(name=asset, symbol=asset, balance=float(balance)))
+                new_asset = Asset(
+                    name=asset,
+                    symbol=asset,
+                    balance=float(balance),
+                    price=prices.get(asset, 0),
+                    currency="USD"
+                )
+
+                assets.append(new_asset)
 
         return assets
 

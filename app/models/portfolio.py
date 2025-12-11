@@ -18,6 +18,9 @@ class Portfolio:
         self.assets = [x for x in self.assets if x.name != asset_name]
 
     def show_assets(self):
+        if not self.assets:
+            return
+
         console = Console()
         table = Table(show_header=True, header_style="bold magenta")
         column_titles = list(self.assets[0].__dict__.keys())
@@ -34,7 +37,8 @@ class Portfolio:
         total_value = 0
         for asset in self.assets:
             values = [d["value"] for d in asset.formatted_output()]
-            total_value += asset.price * asset.balance
+            if asset.price is not None:
+                total_value += asset.price * asset.balance
             table.add_row(*values)
 
         table.title = f"{self.name} Wallet - Total Value: ${total_value:.2f}"
