@@ -23,3 +23,4 @@ if __name__ == '__main__':
 
     exchange = Exchange("Kraken")
     exchange.show_assets()
+    exchange.export_assets()
