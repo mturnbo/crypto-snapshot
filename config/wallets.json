@@ -1,0 +1,38 @@
+{
+  "atomic": {
+    "BTC": "15A1jLndD782VZgfSsnttkj7eQ2DZNa52t",
+    "ERC20": "0xbafB71A39A953b6aB6c87bA95bFD743538aC7cCD",
+    "TRX": "TA6utc4EUi6zqkkX3XXmA7n97ieSFdMcVU",
+    "VET": "0x4eeba3dcde92d0070013ce3d352b48092ea0e8f5"
+  },
+  "tangem": {
+    "BTC": "bc1q54d562l2mxzqeed5664nfemqga3ac9556zkark",
+    "LTC": "ltc1qte7zcxw2clv0wjjc4jxqsx0fyv4lhnm95t8nq0",
+    "ERC20": "0xa24F6404A198809980f0E37fdafFf2f70f717adb",
+    "ADA": "addr1v9ekujsyp9ms7ywemat3nu7cu4we838x0cd0sasad466nlqpg497f",
+    "SOL": "8396mtNyDGsoe9e7XTRFxxH7xYDiXMVQvLHZN7sGmx2D",
+    "TRX": "TNvvLVrRGQkZJ2oBABg18KoSRkLMgFF7Xo"
+  },
+  "ledger_x": {
+    "XRP": "rDSmwboDgF3iQdifSdVPApcRf3SrSyoBaH"
+  },
+  "ledger_s": {
+    "BTC": "bc1q2qldarz4k8ndz03lhpgm6rjxw7hhczesxm7dta",
+    "ERC20": "0x56fe1675A7dA3cCE580b7A2d0460136Ee3743894"
+  },
+  "hucknail": {
+    "ADA": "addr1q9wgrgy30jr4q4kw9rhwyenk5eq8avmcaw0y5lsgwmzadqrpudry7dhccxr9cpqf0n7sxe4q8jhj74tjht7zxmk8fjaq4yu4r6"
+  },
+  "iman": {
+    "ADA": "addr1q8tcpyk02357dwa5p46cwxkdcexdzf8u63ngqyvdffq0jl9wqzdk2ptn68yw9e4fjc4g7zqt0tfxl9w9xamznsl5f87s69dsp6"
+  },
+  "gru": {
+    "ADA": "addr1qxahf5t64fvf5fnd25shfppjuy4dhgtckpcyr7xx9hd0f2m2vy5wcne9l5zda9qtcagjjr8sguydhjr2q8eljpywx4nsqku8rv"
+  },
+  "solflare": {
+    "SOL": "F1Fqw6Naaw1rW2VaX77pUVVJr6mCTXC6VsP9gEhUsbqK"
+  },
+  "xdefi": {
+    "ERC20": "0x5772de707efb053B414E81Be3b2fD5Aed7e1534a"
+  }
+}

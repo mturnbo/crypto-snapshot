@@ -1,21 +1,56 @@
 from app.models.asset import Asset
-from typing import List
+from typing import List, Dict
 from rich.console import Console
 from rich.table import Table
+from app.utils.blockchains.bitcoin import get_btc_wallet_balance
+from app.utils.blockchains.litecoin import get_ltc_wallet_balance
+from app.utils.blockchains.cardano import get_wallet_assets as get_cardano_assets
+from app.utils.blockchains.erc20 import get_wallet_assets as get_erc20_assets
+from app.utils.blockchains.solana import get_wallet_assets as get_solana_assets
 import csv
 from datetime import datetime, timezone
 
 class Portfolio:
-    def __init__(self, name: str="", type: str=""):
+    def __init__(self, name: str="", portfolio_type: str="", address_list: Dict[str, str]={}):
         self.name = name
-        self.type = type
+        self.type: str = portfolio_type
+        self.addresses: Dict[str, str] = address_list
         self.assets: List[Asset] = []
+        self.get_assets()
+
+    def get_assets(self):
+        self.assets = []
+
+        for blockchain, address in self.addresses.items():
+            new_assets = []
+            match blockchain.lower():
+                case "btc":
+                    new_assets = [get_btc_wallet_balance(address)]
+                case "ltc":
+                    new_assets = [get_ltc_wallet_balance(address)]
+                case "ada":
+                    new_assets = get_cardano_assets(address)
+                case "erc20":
+                    new_assets = get_erc20_assets(address)
+                case "sol":
+                    new_assets = get_solana_assets(address)
+            self.assets.extend(new_assets)
 
     def add_asset(self, asset: Asset):
         self.assets.append(asset)
 
     def remove_asset(self, asset_name: str):
         self.assets = [x for x in self.assets if x.name != asset_name]
+
+    def show_addresses(self):
+        console = Console()
+        table = Table(show_header=True, header_style="bold magenta")
+        table.title = f"{self.name} Portfolio Addresses"
+        table.add_column("Blockchain", justify="left", min_width=12)
+        table.add_column("Address", justify="left", min_width=40)
+        for blockchain, address in self.addresses.items():
+            table.add_row(blockchain, address)
+        console.print(table)
 
     def show_assets(self):
         if not self.assets:
@@ -41,7 +76,7 @@ class Portfolio:
                 total_value += asset.price * asset.balance
             table.add_row(*values)
 
-        table.title = f"{self.name} Wallet - Total Value: ${total_value:.2f}"
+        table.title = f"{self.name} Portfolio - Total Value: ${total_value:.2f}"
         console.print(table)
 
     def export_assets(self):

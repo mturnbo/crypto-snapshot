@@ -1,10 +1,12 @@
 from app.models.token import Token
 
 class Asset(Token):
-    def __init__(self, name, symbol, id=None, blockchain=None, balance=0, price=0, currency="USD"):
+    def __init__(self, name, symbol, id=None, blockchain=None, address="", balance=0, price=0, currency="USD"):
         super().__init__(name, symbol, id, blockchain)
+        self.address: str = address
         self.balance: float = balance
         self.price: float = price
+        self.currency: str = currency
 
     def formatted_output(self):
         output = []
@@ -18,6 +20,12 @@ class Asset(Token):
             "justification": "left",
             "value": self.id,
             "max_width": 20,
+        })
+        output.append({
+            "title": "Address",
+            "justification": "left",
+            "value": self.address,
+            "max_width": 30,
         })
         output.append({
             "title": "Balance",
@@ -34,6 +42,11 @@ class Asset(Token):
             "title": "Value",
             "justification": "right",
             "value": f"${total_value:,.2f}" if total_value is not None else "N/A",
+        })
+        output.append({
+            "title": "Currency",
+            "justification": "left",
+            "value": self.currency
         })
 
         return output

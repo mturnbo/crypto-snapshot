@@ -1,7 +1,7 @@
 from kraken.spot import User, Market
 from dotenv import load_dotenv
 from app.models.asset import Asset
-from app.utils.util_price_data import get_token_prices
+from app.utils.price_data import get_token_prices
 import os
 
 load_dotenv()
