@@ -8,7 +8,6 @@ def get_ltc_wallet_balance(address: str) -> Asset:
 
         response = requests.get(url, timeout=10)
         response.raise_for_status()
-
         data = response.json()
 
         # Convert from litoshi to LTC (1 LTC = 100,000,000 litoshi)
@@ -20,6 +19,7 @@ def get_ltc_wallet_balance(address: str) -> Asset:
                 name="Litecoin",
                 symbol="LTC",
                 blockchain="litecoin",
+                address=address,
                 balance=balance_ltc,
                 price=usd_value,
                 currency="USD",

@@ -8,9 +8,7 @@ def get_btc_wallet_balance(address: str) -> Asset:
 
         response = requests.get(url, timeout=10)
         response.raise_for_status()
-
         data = response.json()
-        print(data)
 
         if address in data:
             balance_satoshi = data[address]['final_balance']
@@ -21,6 +19,7 @@ def get_btc_wallet_balance(address: str) -> Asset:
                 name="Bitcoin",
                 symbol="BTC",
                 blockchain="bitcoin",
+                address=address,
                 balance=balance_btc,
                 price=usd_value,
                 currency="USD",
