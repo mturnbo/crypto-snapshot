@@ -1,7 +1,7 @@
 import requests
 from app.models.asset import Asset
 
-def get_btc_wallet_balance(address: str) -> Asset:
+def get_btc_balance(address: str) -> Asset:
     try:
         # blockchain.info API
         url = f"https://blockchain.info/balance?active={address}"

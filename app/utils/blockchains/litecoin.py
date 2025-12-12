@@ -1,7 +1,7 @@
 import requests
 from app.models.asset import Asset
 
-def get_ltc_wallet_balance(address: str) -> Asset:
+def get_ltc_balance(address: str) -> Asset:
     try:
         # BlockCypher API
         url = f"https://api.blockcypher.com/v1/ltc/main/addrs/{address}/balance"

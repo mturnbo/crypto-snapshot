@@ -11,7 +11,8 @@
     "ERC20": "0xa24F6404A198809980f0E37fdafFf2f70f717adb",
     "ADA": "addr1v9ekujsyp9ms7ywemat3nu7cu4we838x0cd0sasad466nlqpg497f",
     "SOL": "8396mtNyDGsoe9e7XTRFxxH7xYDiXMVQvLHZN7sGmx2D",
-    "TRX": "TNvvLVrRGQkZJ2oBABg18KoSRkLMgFF7Xo"
+    "TRX": "TNvvLVrRGQkZJ2oBABg18KoSRkLMgFF7Xo",
+    "POL": "0xa24F6404A198809980f0E37fdafFf2f70f717adb"
   },
   "ledger_x": {
     "XRP": "rDSmwboDgF3iQdifSdVPApcRf3SrSyoBaH"
