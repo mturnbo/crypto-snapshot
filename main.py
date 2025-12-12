@@ -12,6 +12,10 @@ with open(file_path) as f:
 
 if __name__ == '__main__':
     try:
+        # get wallet assets
+
+        # get exchange assets
+
         wallet_address = addresses[sys.argv[1]][sys.argv[2]]
     except KeyError:
         print("Invalid wallet name or address.")

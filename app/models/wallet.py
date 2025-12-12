@@ -1,7 +1,9 @@
 from app.models.portfolio import Portfolio
-from app.utils.wallets.utils_cardano import get_wallet_assets as get_cardano_assets
-from app.utils.wallets.utils_erc20 import get_wallet_assets as get_erc20_assets
-from app.utils.wallets.utils_solana import get_wallet_assets as get_solana_assets
+from app.utils.blockchains.bitcoin import get_btc_wallet_balance
+from app.utils.blockchains.litecoin import get_ltc_wallet_balance
+from app.utils.blockchains.cardano import get_wallet_assets as get_cardano_assets
+from app.utils.blockchains.erc20 import get_wallet_assets as get_erc20_assets
+from app.utils.blockchains.solana import get_wallet_assets as get_solana_assets
 
 class Wallet(Portfolio):
     def __init__(self, name: str="", address: str="", blockchain: str="", type: str="wallet"):
@@ -12,6 +14,10 @@ class Wallet(Portfolio):
 
     def get_assets(self):
         match self.blockchain.lower():
+            case "bitcoin":
+                self.assets = [get_btc_wallet_balance(self.address)]
+            case "litecoin":
+                self.assets = [get_ltc_wallet_balance(self.address)]
             case "cardano":
                 self.assets = get_cardano_assets(self.address)
             case "erc20":

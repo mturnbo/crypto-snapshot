@@ -1,5 +1,5 @@
 from app.models.portfolio import Portfolio
-from app.utils.exchanges.kraken_util import get_kraken_portfolio
+from app.utils.exchanges.kraken import get_kraken_portfolio
 
 class Exchange(Portfolio):
     def __init__(self, name: str="", type: str="exchange"):

@@ -1,8 +1,19 @@
 {
+  "btc": {
+    "tangem": "bc1q54d562l2mxzqeed5664nfemqga3ac9556zkark",
+    "ledgers": "bc1q2qldarz4k8ndz03lhpgm6rjxw7hhczesxm7dta"
+  },
+  "ltc": {
+    "tangem": "ltc1qte7zcxw2clv0wjjc4jxqsx0fyv4lhnm95t8nq0"
+  },
+  "xrp": {
+    "ledgerx": "rDSmwboDgF3iQdifSdVPApcRf3SrSyoBaH"
+  },
   "cardano": {
     "hucknail": "addr1q9wgrgy30jr4q4kw9rhwyenk5eq8avmcaw0y5lsgwmzadqrpudry7dhccxr9cpqf0n7sxe4q8jhj74tjht7zxmk8fjaq4yu4r6",
     "iman": "addr1q8tcpyk02357dwa5p46cwxkdcexdzf8u63ngqyvdffq0jl9wqzdk2ptn68yw9e4fjc4g7zqt0tfxl9w9xamznsl5f87s69dsp6",
-    "gru": "addr1qxahf5t64fvf5fnd25shfppjuy4dhgtckpcyr7xx9hd0f2m2vy5wcne9l5zda9qtcagjjr8sguydhjr2q8eljpywx4nsqku8rv"
+    "gru": "addr1qxahf5t64fvf5fnd25shfppjuy4dhgtckpcyr7xx9hd0f2m2vy5wcne9l5zda9qtcagjjr8sguydhjr2q8eljpywx4nsqku8rv",
+    "tangem": "addr1v9ekujsyp9ms7ywemat3nu7cu4we838x0cd0sasad466nlqpg497f"
   },
   "erc20": {
     "tangem": "0xa24F6404A198809980f0E37fdafFf2f70f717adb",
@@ -11,6 +22,7 @@
     "ledgerx": "0x53D0592e407B0286737548F03a4717C3Bd4AbCD7"
   },
   "solana": {
-    "solflare": "F1Fqw6Naaw1rW2VaX77pUVVJr6mCTXC6VsP9gEhUsbqK"
+    "solflare": "F1Fqw6Naaw1rW2VaX77pUVVJr6mCTXC6VsP9gEhUsbqK",
+    "tangem": "8396mtNyDGsoe9e7XTRFxxH7xYDiXMVQvLHZN7sGmx2D"
   }
 }
