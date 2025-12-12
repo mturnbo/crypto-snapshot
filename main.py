@@ -3,6 +3,7 @@ import sys
 import json
 from app.models.wallet import Wallet
 from app.models.exchange import Exchange
+import argparse
 
 addresses = {}
 file_path = os.path.join('config','addresses.json')
@@ -11,20 +12,15 @@ with open(file_path) as f:
 
 
 if __name__ == '__main__':
-    try:
-        # get wallet assets
+    parser = argparse.ArgumentParser(description="Crypto Portfolio Snapshot")
+    parser.add_argument("operation", choices=["scan", "save"], help="Scan and display assets or save to CSV")
+    parser.add_argument("--wallet", type=str, required=False, help="Name of wallet to scan")
+    parser.add_argument("--exchange", type=str, required=False, help="Name of exchange to scan")
+    parser.add_argument("--blockchain", type=str, required=False, help="Name of blockchain to scan")
+    args = parser.parse_args()
 
-        # get exchange assets
+    # get wallet assets
 
-        wallet_address = addresses[sys.argv[1]][sys.argv[2]]
-    except KeyError:
-        print("Invalid wallet name or address.")
-        sys.exit(1)
+    # get exchange assets
 
-    # wallet = Wallet(sys.argv[2].title(), wallet_address, sys.argv[1])
-    # wallet.export_assets()
-    # wallet.show_assets()
-
-    exchange = Exchange("Kraken")
-    exchange.show_assets()
-    exchange.export_assets()
+    print(args)
