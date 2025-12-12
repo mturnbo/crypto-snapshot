@@ -2,11 +2,13 @@ from app.models.asset import Asset
 from typing import List, Dict
 from rich.console import Console
 from rich.table import Table
-from app.utils.blockchains.bitcoin import get_btc_wallet_balance
-from app.utils.blockchains.litecoin import get_ltc_wallet_balance
+from app.utils.blockchains.bitcoin import get_btc_balance
+from app.utils.blockchains.litecoin import get_ltc_balance
+from app.utils.blockchains.polygon import get_polygon_balance
 from app.utils.blockchains.cardano import get_wallet_assets as get_cardano_assets
 from app.utils.blockchains.erc20 import get_wallet_assets as get_erc20_assets
 from app.utils.blockchains.solana import get_wallet_assets as get_solana_assets
+
 import csv
 from datetime import datetime, timezone
 
@@ -25,15 +27,17 @@ class Portfolio:
             new_assets = []
             match blockchain.lower():
                 case "btc":
-                    new_assets = [get_btc_wallet_balance(address)]
+                    new_assets = [get_btc_balance(address)]
                 case "ltc":
-                    new_assets = [get_ltc_wallet_balance(address)]
+                    new_assets = [get_ltc_balance(address)]
                 case "ada":
                     new_assets = get_cardano_assets(address)
                 case "erc20":
                     new_assets = get_erc20_assets(address)
                 case "sol":
                     new_assets = get_solana_assets(address)
+                case "pol":
+                    new_assets = [get_polygon_balance(address)]
             self.assets.extend(new_assets)
 
     def add_asset(self, asset: Asset):
