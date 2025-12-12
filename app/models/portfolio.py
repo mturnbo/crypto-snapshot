@@ -76,7 +76,7 @@ class Portfolio:
                 total_value += asset.price * asset.balance
             table.add_row(*values)
 
-        table.title = f"{self.name} Wallet - Total Value: ${total_value:.2f}"
+        table.title = f"{self.name} Portfolio - Total Value: ${total_value:.2f}"
         console.print(table)
 
     def export_assets(self):

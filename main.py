@@ -28,7 +28,7 @@ if __name__ == '__main__':
     # for portfolio in portfolios:
     #     print(portfolio.addresses)
 
-    portfolio = Portfolio("atomic", "wallet", wallets["atomic"])
+    portfolio = Portfolio("tangem", "wallet", wallets["tangem"])
     portfolio.show_addresses()
     portfolio.show_assets()
 
