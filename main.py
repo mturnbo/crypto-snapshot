@@ -9,10 +9,13 @@ with open(file_path) as f:
     wallets = json.load(f)
 
 
-def get_wallet_assets(wallet_address):
+def get_wallet_assets():
     for wallet, tokens in wallets.items():
         portfolio = Portfolio(wallet, "wallet", tokens)
         portfolio.show_assets()
+
+def get_exchange_assets():
+    pass
 
 if __name__ == '__main__':
     # get command line arguments
@@ -25,4 +28,4 @@ if __name__ == '__main__':
 
     # get portfolio assets
     get_wallet_assets()
-    # get_exchange_assets()
+    get_exchange_assets()
