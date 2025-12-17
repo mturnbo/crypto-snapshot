@@ -3,16 +3,20 @@ import json
 from app.models.portfolio import Portfolio
 import argparse
 
-wallets_addresses = {}
-file_path = os.path.join('config','wallets.json')
-with open(file_path) as f:
-    wallets = json.load(f)
-
-
-def get_wallet_assets(wallet_address):
+def get_wallet_assets():
+    file_path = os.path.join('config', 'wallets.json')
+    with open(file_path) as f:
+        wallets = json.load(f)
     for wallet, tokens in wallets.items():
         portfolio = Portfolio(wallet, "wallet", tokens)
         portfolio.show_assets()
+
+def get_exchange_assets():
+    portfolio = Portfolio('kraken','exchange')
+    portfolio.show_assets()
+    portfolio = Portfolio('coinbase','exchange')
+    portfolio.show_assets()
+
 
 if __name__ == '__main__':
     # get command line arguments
@@ -23,6 +27,6 @@ if __name__ == '__main__':
     parser.add_argument("--blockchain", type=str, required=False, help="Name of blockchain to scan")
     args = parser.parse_args()
 
-    # get portfolio assets
+    # scan wallets and exchanges
     get_wallet_assets()
-    # get_exchange_assets()
+    get_exchange_assets()

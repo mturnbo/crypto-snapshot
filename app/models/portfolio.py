@@ -8,7 +8,8 @@ from app.utils.blockchains.polygon import get_polygon_balance
 from app.utils.blockchains.cardano import get_wallet_assets as get_cardano_assets
 from app.utils.blockchains.erc20 import get_wallet_assets as get_erc20_assets
 from app.utils.blockchains.solana import get_wallet_assets as get_solana_assets
-
+from app.utils.exchanges.api_coinbase import get_coinbase_portfolio
+from app.utils.exchanges.api_kraken import get_kraken_portfolio
 import csv
 from datetime import datetime, timezone
 
@@ -23,22 +24,31 @@ class Portfolio:
     def get_assets(self):
         self.assets = []
 
-        for blockchain, address in self.addresses.items():
-            new_assets = []
-            match blockchain.lower():
-                case "btc":
-                    new_assets = [get_btc_balance(address)]
-                case "ltc":
-                    new_assets = [get_ltc_balance(address)]
-                case "ada":
-                    new_assets = get_cardano_assets(address)
-                case "erc20":
-                    new_assets = get_erc20_assets(address)
-                case "sol":
-                    new_assets = get_solana_assets(address)
-                case "pol":
-                    new_assets = [get_polygon_balance(address)]
-            self.assets.extend(new_assets)
+        match self.type.lower():
+            case "exchange":
+                match self.name.lower():
+                    case "coinbase":
+                        self.assets = get_coinbase_portfolio()
+                    case "kraken":
+                        self.assets = get_kraken_portfolio()
+
+            case "wallet":
+                for blockchain, address in self.addresses.items():
+                    new_assets = []
+                    match blockchain.lower():
+                        case "btc":
+                            new_assets = [get_btc_balance(address)]
+                        case "ltc":
+                            new_assets = [get_ltc_balance(address)]
+                        case "ada":
+                            new_assets = get_cardano_assets(address)
+                        case "erc20":
+                            new_assets = get_erc20_assets(address)
+                        case "sol":
+                            new_assets = get_solana_assets(address)
+                        case "pol":
+                            new_assets = [get_polygon_balance(address)]
+                    self.assets.extend(new_assets)
 
     def add_asset(self, asset: Asset):
         self.assets.append(asset)
