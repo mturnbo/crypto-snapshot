@@ -85,7 +85,7 @@ def build_jwt(uri: str, private_key: bytes):
         return None
 
 
-def get_coinbase_portfolio(client):
+def get_portfolio_data(client):
     portfolios = client.get_portfolios()
     portUuid = portfolios['portfolios'][0]['uuid']
     portfolio_data = client.get_portfolio_breakdown(portfolio_uuid=portUuid)
@@ -105,3 +105,7 @@ def get_coinbase_portfolio(client):
 
     return assets
 
+def get_coinbase_portfolio():
+    api_secret = decode_private_key_from_env()
+    client = RESTClient(api_key=API_KEY_NAME, api_secret=api_secret)
+    return get_portfolio_data(client)
