@@ -15,7 +15,7 @@ def get_wallet_assets():
         portfolio.show_assets()
 
 def get_exchange_assets():
-    pass
+    portfolio = Portfolio('kraken','exchange')
 
 if __name__ == '__main__':
     # get command line arguments

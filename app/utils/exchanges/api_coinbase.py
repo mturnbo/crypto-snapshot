@@ -7,6 +7,7 @@ import jwt
 from cryptography.hazmat.primitives import serialization
 import secrets
 import base64
+from app.models.asset import Asset
 
 load_dotenv()
 
@@ -84,23 +85,23 @@ def build_jwt(uri: str, private_key: bytes):
         return None
 
 
-def get_portfolio_data(client):
+def get_coinbase_portfolio(client):
     portfolios = client.get_portfolios()
     portUuid = portfolios['portfolios'][0]['uuid']
-
-    # Fetch portfolio breakdown data
     portfolio_data = client.get_portfolio_breakdown(portfolio_uuid=portUuid)
 
-    # Display portfolio breakdown
+    assets = []
     for position in portfolio_data['breakdown']['spot_positions']:
-        print(f"{position['asset']}\t{position['total_balance_crypto']}\t${position['available_to_trade_fiat']}")
+        print(position)
+        # print(f"{position['asset']}\t{position['total_balance_crypto']}\t${position['available_to_trade_fiat']}")
+        crypto_price = position['total_balance_fiat'] / position['total_balance_crypto']
+        assets.append(Asset(
+            name=position['asset'],
+            symbol=position['asset'],
+            balance=position['total_balance_crypto'],
+            price=crypto_price,
+            currency="USD"
+        ))
 
+    return assets
 
-def main():
-    api_secret = decode_private_key_from_env()
-    client = RESTClient(api_key=API_KEY_NAME, api_secret=api_secret)
-    get_portfolio_data(client)
-
-
-if __name__ == "__main__":
-    main()
