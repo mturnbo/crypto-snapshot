@@ -4,7 +4,6 @@ from app.models.portfolio import Portfolio
 import argparse
 
 def get_wallet_assets():
-    wallets_addresses = {}
     file_path = os.path.join('config', 'wallets.json')
     with open(file_path) as f:
         wallets = json.load(f)
@@ -17,6 +16,7 @@ def get_exchange_assets():
     portfolio.show_assets()
     portfolio = Portfolio('coinbase','exchange')
     portfolio.show_assets()
+
 
 if __name__ == '__main__':
     # get command line arguments

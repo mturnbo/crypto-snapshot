@@ -92,8 +92,6 @@ def get_portfolio_data(client):
 
     assets = []
     for position in portfolio_data['breakdown']['spot_positions']:
-        print(position)
-        # print(f"{position['asset']}\t{position['total_balance_crypto']}\t${position['available_to_trade_fiat']}")
         crypto_price = position['total_balance_fiat'] / position['total_balance_crypto']
         assets.append(Asset(
             name=position['asset'],
