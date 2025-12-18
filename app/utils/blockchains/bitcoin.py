@@ -1,5 +1,7 @@
 import requests
 from app.models.asset import Asset
+from app.utils.price_data import get_token_price
+
 
 def get_btc_balance(address: str) -> Asset:
     try:
@@ -13,7 +15,7 @@ def get_btc_balance(address: str) -> Asset:
         if address in data:
             balance_satoshi = data[address]['final_balance']
             balance_btc = balance_satoshi / 100000000  # Convert satoshi to BTC
-            usd_value = 0
+            usd_value = get_token_price('BTC')
 
             asset = Asset(
                 name="Bitcoin",

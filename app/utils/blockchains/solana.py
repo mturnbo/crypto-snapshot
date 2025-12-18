@@ -1,15 +1,13 @@
 from typing import List
-
 import requests
 import os
 import json
 from app.models.asset import Asset
+from app.utils.price_data import get_token_price
 from config.settings import ROOT_DIR
 
 BASE_API_URL = "https://api.mainnet-beta.solana.com"
 BDS_API_KEY = os.environ.get('BDS_API_KEY')
-
-# JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN, 4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R
 
 def refresh_solana_token_metadata():
     url = "https://raw.githubusercontent.com/solana-labs/token-list/main/src/tokens/solana.tokenlist.json"
@@ -66,6 +64,7 @@ def get_wallet_assets(wallet_address) -> List[Asset]:
         mint = info['mint']
         token_amount = info['tokenAmount']
         balance = int(token_amount['amount']) / (10 ** int(token_amount['decimals']))
+
         if balance > 0:
             asset = Asset(
                 name=token_map.get(mint, {}).get("name", ""),
@@ -76,6 +75,7 @@ def get_wallet_assets(wallet_address) -> List[Asset]:
                 balance=balance,
                 currency="USD",
             )
+            asset.price = get_token_price(asset.symbol)
 
             wallet_assets.append(asset)
 
