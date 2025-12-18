@@ -19,7 +19,7 @@ class Asset(Token):
             "title": "ID",
             "justification": "left",
             "value": self.id,
-            "max_width": 20,
+            "width": 20,
         })
         output.append({
             "title": "Address",
