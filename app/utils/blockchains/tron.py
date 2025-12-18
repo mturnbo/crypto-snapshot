@@ -1,7 +1,10 @@
+import os
+from dotenv import load_dotenv
 import requests
 from app.models.asset import Asset
-from typing import Dict, Optional
+from typing import Optional
 
+load_dotenv()
 
 def get_tron_balance(wallet_address: str) -> Optional[float]:
     try:
@@ -19,11 +22,10 @@ def get_tron_balance(wallet_address: str) -> Optional[float]:
             balance_trx = balance_sun / 1_000_000
             return balance_trx
         else:
-            print(f"No account found for address: {wallet_address}")
             return 0.0
 
     except requests.exceptions.RequestException as e:
-        print(f"Error fetching balance: {e}")
+        print(f"Error fetching TRON balance: {e}")
         return None
 
 
@@ -34,8 +36,10 @@ def get_tron_price() -> Optional[float]:
             "ids": "tron",
             "vs_currencies": "usd"
         }
+        API_KEY = os.getenv('API_CG')
+        headers = { 'x-cg-demo-api-key': API_KEY }
 
-        response = requests.get(url, params=params, timeout=10)
+        response = requests.get(url, headers=headers, params=params, timeout=10)
         response.raise_for_status()
 
         data = response.json()
@@ -64,3 +68,6 @@ def get_tron_wallet_info(wallet_address: str) -> Asset:
         price=price,
         currency="USD",
     )
+
+
+print(get_tron_price())
