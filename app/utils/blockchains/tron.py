@@ -1,8 +1,8 @@
-import os
 from dotenv import load_dotenv
 import requests
 from app.models.asset import Asset
 from typing import Optional
+from app.utils.price_data import get_token_price
 
 load_dotenv()
 
@@ -29,35 +29,9 @@ def get_tron_balance(wallet_address: str) -> Optional[float]:
         return None
 
 
-def get_tron_price() -> Optional[float]:
-    try:
-        url = "https://api.coingecko.com/api/v3/simple/price"
-        params = {
-            "ids": "tron",
-            "vs_currencies": "usd"
-        }
-        API_KEY = os.getenv('API_CG')
-        headers = { 'x-cg-demo-api-key': API_KEY }
-
-        response = requests.get(url, headers=headers, params=params, timeout=10)
-        response.raise_for_status()
-
-        data = response.json()
-        price = data.get("tron", {}).get("usd")
-
-        return price
-
-    except requests.exceptions.RequestException as e:
-        print(f"Error fetching price: {e}")
-        return None
-
-
 def get_tron_wallet_info(wallet_address: str) -> Asset:
     balance = get_tron_balance(wallet_address)
-    price = get_tron_price()
-    usd_value = None
-    if balance is not None and price is not None:
-        usd_value = balance * price
+    usd_value = get_token_price('TRX')
 
     return Asset(
         name="TRON",
@@ -65,9 +39,6 @@ def get_tron_wallet_info(wallet_address: str) -> Asset:
         blockchain="tron",
         address=wallet_address,
         balance=balance,
-        price=price,
+        price=usd_value,
         currency="USD",
     )
-
-
-print(get_tron_price())

@@ -1,5 +1,7 @@
 import requests
 from app.models.asset import Asset
+from app.utils.price_data import get_token_price
+
 
 def get_ltc_balance(address: str) -> Asset:
     try:
@@ -12,7 +14,7 @@ def get_ltc_balance(address: str) -> Asset:
 
         # Convert from litoshi to LTC (1 LTC = 100,000,000 litoshi)
         balance_ltc = data['final_balance'] / 100000000
-        usd_value = 0
+        usd_value = get_token_price('LTC')
 
         if address == data['address']:
             asset = Asset(

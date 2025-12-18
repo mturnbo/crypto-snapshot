@@ -13,6 +13,10 @@ headers = {
     'Accept': 'application/json'
 }
 
+def get_token_price(symbol: str):
+    return get_token_prices([symbol])[symbol]
+
+
 def get_token_prices(symbols: List):
     prices = {}
     try:
