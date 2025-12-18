@@ -28,5 +28,5 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # scan wallets and exchanges
-    get_wallet_assets()
+    # get_wallet_assets()
     get_exchange_assets()
