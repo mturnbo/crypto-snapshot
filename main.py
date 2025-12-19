@@ -11,8 +11,7 @@ def get_wallets():
     return wallets
 
 
-def get_wallet_assets():
-    wallets = get_wallets()
+def get_wallet_assets(wallets):
     for wallet, tokens in wallets.items():
         portfolio = Portfolio(wallet, "wallet", tokens)
         portfolio.show_assets()
@@ -33,15 +32,21 @@ if __name__ == '__main__':
     parser.add_argument("--blockchain", type=str, required=False, help="Name of blockchain to scan")
     args = parser.parse_args()
 
-    wallets = get_wallets()
 
     if args.wallet:
-        print(f"Scanning wallet: {args.wallet} ...")
-        tokens = wallets[args.wallet]
-        portfolio = Portfolio(args.wallet, "wallet", tokens)
-        portfolio.show_assets()
+        wallets = get_wallets()
+        if args.wallet == "all":
+            get_wallet_assets(wallets)
+        else:
+            print(f"Scanning wallet: {args.wallet} ...")
+            tokens = wallets[args.wallet]
+            portfolio = Portfolio(args.wallet, "wallet", tokens)
+            portfolio.show_assets()
 
-
-    # scan wallets and exchanges
-    # get_wallet_assets(wallets)
-    # get_exchange_assets()
+    if args.exchange:
+        if args.exchange == "all":
+            get_exchange_assets()
+        else:
+            print(f"Scanning exchange: {args.exchange} ...")
+            portfolio = Portfolio(args.exchange, "exchange")
+            portfolio.show_assets()
