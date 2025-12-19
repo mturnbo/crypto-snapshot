@@ -7,7 +7,7 @@
 .env.dev.local
 .env.test.local
 .env.production.local
-venv
+.venv
 
 ### IDE ###
 # JETBRAINS
