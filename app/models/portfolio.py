@@ -1,3 +1,5 @@
+import os
+from dotenv import load_dotenv
 from app.models.asset import Asset
 from typing import List, Dict
 from rich.console import Console
@@ -9,8 +11,9 @@ from app.utils.blockchains.cardano import get_wallet_assets as get_cardano_asset
 from app.utils.blockchains.erc20 import get_wallet_assets as get_erc20_assets
 from app.utils.blockchains.solana import get_wallet_assets as get_solana_assets
 from app.utils.blockchains.tron import get_tron_wallet_info as get_tron_balance
-from app.utils.exchanges.api_coinbase import get_coinbase_portfolio
-from app.utils.exchanges.api_kraken import get_kraken_portfolio
+from app.services.coinbase_api import CoinbaseAPI
+from app.services.kraken_api import KrakenAPI
+
 import csv
 from datetime import datetime, timezone
 
@@ -27,11 +30,18 @@ class Portfolio:
 
         match self.type.lower():
             case "exchange":
+                load_dotenv()
                 match self.name.lower():
                     case "coinbase":
-                        self.assets = get_coinbase_portfolio()
+                        api_key = os.getenv('COINBASE_API_KEY')
+                        api_secret = os.getenv('COINBASE_API_SECRET')
+                        cb_api = CoinbaseAPI(api_key, api_secret)
+                        self.assets = cb_api.get_portfolio_assets()
                     case "kraken":
-                        self.assets = get_kraken_portfolio()
+                        api_key = os.getenv('KRAKEN_API_KEY')
+                        api_secret = os.getenv('KRAKEN_PRIVATE_KEY')
+                        kraken_api = KrakenAPI(api_key, api_secret)
+                        self.assets = kraken_api.get_portfolio_assets()
 
             case "wallet":
                 for blockchain, address in self.addresses.items():
@@ -94,7 +104,7 @@ class Portfolio:
                 total_value += asset.price * asset.balance
             table.add_row(*values)
 
-        table.title = f"{self.name} Portfolio - Total Value: ${total_value:.2f}"
+        table.title = f"{self.name.capitalize()} Portfolio - Total Value: ${total_value:.2f}"
         console.print(table)
 
     def export_assets(self):
