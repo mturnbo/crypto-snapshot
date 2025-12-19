@@ -1,6 +1,8 @@
 from kraken.spot import User
 from app.models.asset import Asset
 from app.utils.price_data import get_token_prices
+from typing import Dict, List
+
 
 class KrakenAPI:
     def __init__(self, api_key: str, api_secret: str):
@@ -18,7 +20,7 @@ class KrakenAPI:
             print("Please check your API keys and ensure they have 'Query funds' permission.")
 
 
-    def get_portfolio_assets(self):
+    def get_portfolio_assets(self) -> List[Asset]:
         portfolio_data = self.get_portfolio_data()
         tokens = list(portfolio_data.keys())
         filtered_tokens = [token for token in tokens if '.' not in token]

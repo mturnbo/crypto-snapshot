@@ -11,8 +11,6 @@ from app.utils.blockchains.cardano import get_wallet_assets as get_cardano_asset
 from app.utils.blockchains.erc20 import get_wallet_assets as get_erc20_assets
 from app.utils.blockchains.solana import get_wallet_assets as get_solana_assets
 from app.utils.blockchains.tron import get_tron_wallet_info as get_tron_balance
-from app.utils.exchanges.api_kraken import get_kraken_portfolio
-
 from app.services.coinbase_api import CoinbaseAPI
 from app.services.kraken_api import KrakenAPI
 
