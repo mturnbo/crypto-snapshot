@@ -31,9 +31,9 @@ class BinanceUSAPI():
         if not self._session:
             self._session = requests_cache.CachedSession(cache_name=self.cache_name, backend='memory', expire_after=120)
             self._session.headers.update({'Content-Type': 'application/json'})
-            self._session.headers.update({'X-X-MBX-APIKEY': self.api_key })
+            self._session.headers.update({'X-MBX-APIKEY': self.api_key })
             self._session.headers.update({'Accept': 'application/json'})
-            self._session.headers.update({'User-agent': 'crypto-snapshot - python wrapper around CoinMarketCap.com API (github.com/mturnbo/crypto-snapshot)'})
+            self._session.headers.update({'User-agent': 'crypto-snapshot - python wrapper around BinanceUS.com API (github.com/mturnbo/crypto-snapshot)'})
         return self._session
 
     def get_binanceus_signature(self, data):
@@ -43,15 +43,33 @@ class BinanceUSAPI():
         mac = hmac.new(byte_key, message, hashlib.sha256).hexdigest()
         return mac
 
-    def make_requst(self, endpoint, endpoint_params):
-        headers = {}
-        headers['X-MBX-APIKEY'] = self.api_key
-        signature = self.get_binanceus_signature(endpoint_params)
-        params = {
-            **endpoint_params,
-            "signature": signature,
-        }
-        req = requests.get((self.base_url + endpoint), params=params, headers=headers)
+    def make_request(self, endpoint,params):
+        # headers = {}
+        # headers['X-MBX-APIKEY'] = self.api_key
+        # signature = self.get_binanceus_signature(endpoint_params)
+        # params = {
+        #     **endpoint_params,
+        #     "signature": signature,
+        # }
+        # req = requests.get((self.base_url + endpoint), params=params, headers=headers)
+        #
+        # return req.text
 
-        return req.text
+        url = self.base_url + endpoint
+        signature = self.get_binanceus_signature(params)
+        params['signature'] = signature
 
+        response_object = self.session.get(url, params=params, timeout=self.request_timeout)
+
+        try:
+            response = json.loads(response_object.text)
+
+            if isinstance(response, list) and response_object.status_code == 200:
+                response = [dict(item, **{u'cached': response_object.from_cache}) for item in response]
+            if isinstance(response, dict) and response_object.status_code == 200:
+                response[u'cached'] = response_object.from_cache
+
+        except Exception as e:
+            return e
+
+        return response
