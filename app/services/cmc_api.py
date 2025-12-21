@@ -1,5 +1,6 @@
+import os
 import requests
-from typing import List, Dict
+from typing import List, Dict, Any
 from app.utils.utils import split_list
 import tempfile
 import requests_cache
@@ -33,10 +34,11 @@ class CoinMarketCapAPI():
 
     def make_request(self, endpoint, params):
         url = self.base_url + endpoint
-        # print(f"Making request to {url}")
-        # print(self.session.headers)
+        print(f"Making request to {url}")
+        print(self.session.headers)
 
         response_object = self.session.get(url, params=params, timeout=self.request_timeout)
+        print(response_object)
 
         try:
             response = json.loads(response_object.text)
@@ -51,7 +53,7 @@ class CoinMarketCapAPI():
 
         return response
 
-    def get_token_info(self, symbol: str = "") -> Dict:
+    def get_token_info(self, symbol: str = "") -> Dict[str, Any]:
         params = {
             'symbol': symbol,
         }
@@ -74,7 +76,7 @@ class CoinMarketCapAPI():
             'logo': data['logo'],
             'date_launched': data['date_launched'],
             'contracts': contracts,
-            'circulating_supply': data['self_reported_circulating_supply'],
+            'circulating_supply': float(data['self_reported_circulating_supply']),
         }
 
 
@@ -110,21 +112,21 @@ class CoinMarketCapAPI():
 
         return token_prices
 
-import os
-from dotenv import load_dotenv
-load_dotenv()
 
-api_key = os.getenv('API_CMC')
-cmc = CoinMarketCapAPI(api_key)
-
-symbol = 'NIGHT'
-
-token_info = cmc.get_token_info(symbol)
-print(token_info)
-
-token_price = cmc.get_token_price(symbol, 'USD')
-print(token_price)
-
-symbols = ['BTC','ETH','ADA']
-token_prices = cmc.get_token_prices(symbols)
-print(token_prices)
+# from dotenv import load_dotenv
+# load_dotenv()
+#
+# api_key = os.getenv('API_CMC')
+# cmc = CoinMarketCapAPI(api_key)
+#
+# symbol = 'NIGHT'
+#
+# token_info = cmc.get_token_info(symbol)
+# print(token_info)
+#
+# token_price = cmc.get_token_price(symbol, 'USD')
+# print(token_price)
+#
+# symbols = ['BTC','ETH','ADA']
+# token_prices = cmc.get_token_prices(symbols)
+# print(token_prices)
