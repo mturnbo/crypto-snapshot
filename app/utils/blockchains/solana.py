@@ -69,7 +69,6 @@ def get_wallet_assets(wallet_address) -> List[Asset]:
             asset = Asset(
                 name=token_map.get(mint, {}).get("name", ""),
                 symbol=token_map.get(mint, {}).get("symbol", ""),
-                id=mint,
                 blockchain="solana",
                 address=wallet_address,
                 balance=balance,
