@@ -1,5 +1,5 @@
 class Token:
-    def __init__(self, name, symbol, id=None, blockchain=None):
+    def __init__(self, name, symbol, blockchain=None):
+        self.name = name
         self.symbol:str = symbol
-        self.id:str = id
         self.blockchain:str = blockchain

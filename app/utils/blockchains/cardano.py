@@ -33,7 +33,6 @@ def get_wallet_assets(wallet_address: str) -> List[Asset]:
                 asset = Asset(
                     name=asset_info.get("name", ""),
                     symbol=asset_info.get("ticker", ""),
-                    id=asset_info.get("token_id", ""),
                     blockchain="cardano",
                     address=wallet_address,
                     balance=float(token.get("amount", 0)),

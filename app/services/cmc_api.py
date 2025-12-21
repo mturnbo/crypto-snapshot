@@ -51,6 +51,32 @@ class CoinMarketCapAPI():
 
         return response
 
+    def get_token_info(self, symbol: str = "") -> Dict:
+        params = {
+            'symbol': symbol,
+        }
+
+        response = self.make_request('/cryptocurrency/info', params)
+        data = response['data'][symbol][0]
+
+        contracts: List[Dict] = []
+        for address in data['contract_address']:
+            contracts.append({
+                'address': address['contract_address'],
+                'platform_name': address['platform']['name'],
+                'platform_symbol': address['platform']['coin']['symbol'],
+            })
+
+        return {
+            'name': data['name'],
+            'symbol': symbol,
+            'description': data['description'],
+            'logo': data['logo'],
+            'date_launched': data['date_launched'],
+            'contracts': contracts,
+            'circulating_supply': data['self_reported_circulating_supply'],
+        }
+
 
     def get_token_price(self, symbol: str, currency: str = "USD") -> float:
         params = {
@@ -90,7 +116,13 @@ load_dotenv()
 
 api_key = os.getenv('API_CMC')
 cmc = CoinMarketCapAPI(api_key)
-token_price = cmc.get_token_price('BTC', 'USD')
+
+symbol = 'NIGHT'
+
+token_info = cmc.get_token_info(symbol)
+print(token_info)
+
+token_price = cmc.get_token_price(symbol, 'USD')
 print(token_price)
 
 symbols = ['BTC','ETH','ADA']

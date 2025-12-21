@@ -16,7 +16,6 @@ def get_wallet_assets(wallet_address: str) -> List[Asset]:
         asset = Asset(
             name="",
             symbol="ETH",
-            id="",
             blockchain="erc20",
             address=wallet_address,
             balance=asset_info.get("balance", "0"),
@@ -34,7 +33,6 @@ def get_wallet_assets(wallet_address: str) -> List[Asset]:
             asset = Asset(
                 name=asset_info.get("name", ""),
                 symbol=asset_info.get("symbol", ""),
-                id=asset_info.get("token_id", ""),
                 blockchain="erc20",
                 address=wallet_address,
                 balance=balance,
