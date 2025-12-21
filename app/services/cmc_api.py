@@ -19,6 +19,7 @@ class CoinMarketCapAPI():
         self.cache_name = os.path.join(tempfile.gettempdir(), self.cache_filename) if tempdir_cache else self.cache_filename
         self.token_prices: Dict[str, float] = {}
 
+
     @property
     def session(self):
         if not self._session:
@@ -28,6 +29,7 @@ class CoinMarketCapAPI():
             self._session.headers.update({'Accept': 'application/json'})
             self._session.headers.update({'User-agent': 'crypto-snapshot - python wrapper around CoinMarketCap.com API (github.com/mturnbo/crypto-snapshot)'})
         return self._session
+
 
     def make_request(self, endpoint, params):
         url = self.base_url + endpoint
@@ -62,7 +64,7 @@ class CoinMarketCapAPI():
 
 
     def get_token_prices(self, symbols: List, currency: str = "USD") -> Dict[str, float]:
-        self.token_prices = {}
+        token_prices: Dict[str, float] = {}
         try:
             symbol_groups = split_list(symbols, 40)
             for group in symbol_groups:
@@ -72,19 +74,15 @@ class CoinMarketCapAPI():
                 }
 
                 response = self.make_request('/cryptocurrency/quotes/latest', params)
-                token_prices: Dict[str, float] = {}
+
                 for symbol in symbols:
                     if symbol in response['data']:
-                        symbol_data = response['data'][symbol]
-                        if isinstance(symbol_data, list):
-                            symbol_data = symbol_data[0]
-                        token_prices[symbol] = symbol_data['quote']['USD']['price']
-
-                return token_prices
+                        token_prices[symbol] = float(response['data'][symbol][0]['quote'][currency]['price'])
 
         except requests.exceptions.RequestException as e:
             print(f"Error fetching from CoinMarketCap: {e}")
-            return {}
+
+        return token_prices
 
 import os
 from dotenv import load_dotenv
