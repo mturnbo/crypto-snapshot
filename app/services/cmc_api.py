@@ -24,9 +24,9 @@ class CoinMarketCapAPI():
     @property
     def session(self):
         if not self._session:
-            self._session = requests_cache.CachedSession(cache_name=self.cache_name, backend='sqlite', expire_after=120)
+            self._session = requests_cache.CachedSession(cache_name=self.cache_name, backend='memory', expire_after=120)
             self._session.headers.update({'Content-Type': 'application/json'})
-            self._session.headers.update({'X-CMC_PRO_API_KEY': self.api_key,})
+            self._session.headers.update({'X-CMC_PRO_API_KEY': self.api_key})
             self._session.headers.update({'Accept': 'application/json'})
             self._session.headers.update({'User-agent': 'crypto-snapshot - python wrapper around CoinMarketCap.com API (github.com/mturnbo/crypto-snapshot)'})
         return self._session
@@ -34,8 +34,6 @@ class CoinMarketCapAPI():
 
     def make_request(self, endpoint, params):
         url = self.base_url + endpoint
-        print(f"Making request to {url}")
-        print(self.session.headers)
 
         response_object = self.session.get(url, params=params, timeout=self.request_timeout)
         print(response_object)
@@ -52,6 +50,7 @@ class CoinMarketCapAPI():
             return e
 
         return response
+
 
     def get_token_info(self, symbol: str = "") -> Dict[str, Any]:
         params = {
@@ -111,22 +110,3 @@ class CoinMarketCapAPI():
             print(f"Error fetching from CoinMarketCap: {e}")
 
         return token_prices
-
-
-# from dotenv import load_dotenv
-# load_dotenv()
-#
-# api_key = os.getenv('API_CMC')
-# cmc = CoinMarketCapAPI(api_key)
-#
-# symbol = 'NIGHT'
-#
-# token_info = cmc.get_token_info(symbol)
-# print(token_info)
-#
-# token_price = cmc.get_token_price(symbol, 'USD')
-# print(token_price)
-#
-# symbols = ['BTC','ETH','ADA']
-# token_prices = cmc.get_token_prices(symbols)
-# print(token_prices)
