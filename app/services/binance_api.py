@@ -1,19 +1,17 @@
 import os
-import requests
 import requests_cache
-import jwt
 from typing import Dict, List, Any
 import tempfile
 import json
 import urllib.parse
 import hashlib
 import hmac
-import base64
 import time
+
 
 class BinanceUSAPI():
     DEFAULT_TIMEOUT = 60
-    DEFAULT_BASE_URL = 'https://api.binance.us'
+    DEFAULT_BASE_URL = 'https://api.binance.us/api/v3'
     TEMPDIR_CACHE = True
     _session = None
 
@@ -39,25 +37,15 @@ class BinanceUSAPI():
     def get_binanceus_signature(self, data):
         postdata = urllib.parse.urlencode(data)
         message = postdata.encode()
-        byte_key = bytes(self._apisecret, 'UTF-8')
+        byte_key = bytes(self.api_secret, 'UTF-8')
         mac = hmac.new(byte_key, message, hashlib.sha256).hexdigest()
         return mac
 
-    def make_request(self, endpoint,params):
-        # headers = {}
-        # headers['X-MBX-APIKEY'] = self.api_key
-        # signature = self.get_binanceus_signature(endpoint_params)
-        # params = {
-        #     **endpoint_params,
-        #     "signature": signature,
-        # }
-        # req = requests.get((self.base_url + endpoint), params=params, headers=headers)
-        #
-        # return req.text
-
+    def make_request(self, endpoint: str, params, use_signature: bool = True):
         url = self.base_url + endpoint
         signature = self.get_binanceus_signature(params)
-        params['signature'] = signature
+        if use_signature:
+            params['signature'] = signature
 
         response_object = self.session.get(url, params=params, timeout=self.request_timeout)
 
@@ -73,3 +61,40 @@ class BinanceUSAPI():
             return e
 
         return response
+
+    def get_portfolio_data(self):
+        endpoint = "/account"
+        params = {
+            "timestamp": int(round(time.time() * 1000)),
+        }
+
+        account = self.make_request(endpoint, params)
+        balances = [b for b in account['balances'] if float(b['free']) > 0 or float(b['locked']) > 0]
+
+        return balances
+
+    def get_ticker_price(self, trading_pair):
+        endpoint = "/ticker/price"
+        params = {
+            'symbol': trading_pair,
+        }
+        ticker = self.make_request(endpoint, params, False)
+
+        return ticker
+
+
+from dotenv import load_dotenv
+from rich.pretty import pprint
+
+load_dotenv()
+
+API_KEY = os.getenv('BINANCEUS_API_KEY')
+API_SECRET = os.getenv('BINANCEUS_API_SECRET')
+
+bapi = BinanceUSAPI(API_KEY, API_SECRET)
+
+# balances = bapi.get_portfolio_data()
+# pprint(balances)
+
+tp = bapi.get_ticker_price('ADABTC')
+pprint(tp)

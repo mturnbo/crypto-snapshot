@@ -13,7 +13,6 @@ from app.utils.blockchains.solana import get_wallet_assets as get_solana_assets
 from app.utils.blockchains.tron import get_tron_wallet_info as get_tron_balance
 from app.services.coinbase_api import CoinbaseAPI
 from app.services.kraken_api import KrakenAPI
-
 import csv
 from datetime import datetime, timezone
 
