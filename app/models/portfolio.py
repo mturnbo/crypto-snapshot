@@ -13,7 +13,6 @@ from app.utils.blockchains.solana import get_wallet_assets as get_solana_assets
 from app.utils.blockchains.tron import get_tron_wallet_info as get_tron_balance
 from app.services.coinbase_api import CoinbaseAPI
 from app.services.kraken_api import KrakenAPI
-
 import csv
 from datetime import datetime, timezone
 
@@ -39,7 +38,7 @@ class Portfolio:
                         self.assets = cb_api.get_portfolio_assets()
                     case "kraken":
                         api_key = os.getenv('KRAKEN_API_KEY')
-                        api_secret = os.getenv('KRAKEN_PRIVATE_KEY')
+                        api_secret = os.getenv('KRAKEN_API_SECRET')
                         kraken_api = KrakenAPI(api_key, api_secret)
                         self.assets = kraken_api.get_portfolio_assets()
 

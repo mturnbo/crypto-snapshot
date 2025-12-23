@@ -6,7 +6,7 @@ from app.utils.utils import split_list
 
 load_dotenv()
 
-API_KEY = os.getenv('API_CMC')
+API_KEY = os.getenv('COINMARKETCAP_API_KEY')
 url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest'
 headers = {
     'X-CMC_PRO_API_KEY': API_KEY,
