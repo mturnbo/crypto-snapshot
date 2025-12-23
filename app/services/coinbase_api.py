@@ -1,6 +1,5 @@
 from cryptography.hazmat.primitives import serialization
 from app.utils.utils import decode_ec_private_key
-from coinbase.rest import RESTClient
 from app.models.asset import Asset
 import time
 import jwt
@@ -8,14 +7,14 @@ import secrets
 import hmac
 import hashlib
 from typing import Dict, List
+from coinbase.rest import RESTClient
 
 
 class CoinbaseAPI():
     def __init__(self, api_key: str, api_secret: str):
         self.api_key = api_key
         self.api_secret = decode_ec_private_key(api_secret)
-        self.client = RESTClient(api_key=self.api_key, api_secret=self.api_secret)
-
+        self.rest_client = RESTClient(api_key=self.api_key, api_secret=self.api_secret)
 
     def generate_signature(self, timestamp: str, method: str, path: str, body: str = '') -> str:
         # Generate CB-ACCESS-SIGN header for authentication
@@ -67,9 +66,9 @@ class CoinbaseAPI():
 
 
     def get_portfolio_data(self):
-        portfolios = self.client.get_portfolios()
+        portfolios = self.rest_client.get_portfolios()
         portUuid = portfolios['portfolios'][0]['uuid']
-        portfolio_data = self.client.get_portfolio_breakdown(portfolio_uuid=portUuid)
+        portfolio_data = self.rest_client.get_portfolio_breakdown(portfolio_uuid=portUuid)
 
         return portfolio_data
 
@@ -89,4 +88,24 @@ class CoinbaseAPI():
             ))
 
         return assets
-    
+
+
+    def get_ticker_price(self, trade_pair):
+        ticker = self.rest_client.get_product(trade_pair)
+
+        return ticker
+
+
+
+
+import os
+from dotenv import load_dotenv
+from rich.pretty import pprint
+load_dotenv()
+API_KEY_NAME = os.getenv('COINBASE_API_KEY')
+API_PRIVATE_KEY = os.getenv('COINBASE_API_SECRET')
+cb_api = CoinbaseAPI(API_KEY_NAME, API_PRIVATE_KEY)
+# assets = cb_api.get_portfolio_assets()
+
+pprint(cb_api.get_ticker_price('BTC-USD'))
+

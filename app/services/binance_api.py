@@ -73,10 +73,10 @@ class BinanceUSAPI():
 
         return balances
 
-    def get_ticker_price(self, trading_pair):
+    def get_ticker_price(self, trade_pair):
         endpoint = "/ticker/price"
         params = {
-            'symbol': trading_pair,
+            'symbol': trade_pair,
         }
         ticker = self.make_request(endpoint, params, False)
 
