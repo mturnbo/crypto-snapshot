@@ -38,7 +38,7 @@ class Portfolio:
                         self.assets = cb_api.get_portfolio_assets()
                     case "kraken":
                         api_key = os.getenv('KRAKEN_API_KEY')
-                        api_secret = os.getenv('KRAKEN_PRIVATE_KEY')
+                        api_secret = os.getenv('KRAKEN_API_SECRET')
                         kraken_api = KrakenAPI(api_key, api_secret)
                         self.assets = kraken_api.get_portfolio_assets()
 

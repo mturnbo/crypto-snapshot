@@ -94,18 +94,3 @@ class CoinbaseAPI():
         ticker = self.rest_client.get_product(trade_pair)
 
         return ticker
-
-
-
-
-import os
-from dotenv import load_dotenv
-from rich.pretty import pprint
-load_dotenv()
-API_KEY_NAME = os.getenv('COINBASE_API_KEY')
-API_PRIVATE_KEY = os.getenv('COINBASE_API_SECRET')
-cb_api = CoinbaseAPI(API_KEY_NAME, API_PRIVATE_KEY)
-# assets = cb_api.get_portfolio_assets()
-
-pprint(cb_api.get_ticker_price('BTC-USD'))
-
