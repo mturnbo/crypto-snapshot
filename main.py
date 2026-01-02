@@ -2,6 +2,7 @@ import os
 import json
 from app.models.portfolio import Portfolio
 import argparse
+from typing import List, Dict
 
 def get_wallets():
     file_path = os.path.join('config', 'wallets.json')
@@ -11,16 +12,23 @@ def get_wallets():
     return wallets
 
 
-def get_wallet_assets(wallets):
+def get_wallet_portfolios(wallets):
+    portfolio_list: List[Portfolio] = []
     for wallet, tokens in wallets.items():
         portfolio = Portfolio(wallet, "wallet", tokens)
-        portfolio.show_assets()
+        portfolio_list.append(portfolio)
+        # portfolio.show_assets()
 
-def get_exchange_assets():
-    portfolio = Portfolio('kraken','exchange')
-    portfolio.show_assets()
-    portfolio = Portfolio('coinbase','exchange')
-    portfolio.show_assets()
+    return portfolio_list
+
+
+def get_exchange_portfolios():
+    portfolio_list: List[Portfolio] = [
+        Portfolio('kraken', 'exchange'),
+        Portfolio('coinbase', 'exchange')
+    ]
+
+    return portfolio_list
 
 
 if __name__ == '__main__':
@@ -32,11 +40,12 @@ if __name__ == '__main__':
     parser.add_argument("--blockchain", type=str, required=False, help="Name of blockchain to scan")
     args = parser.parse_args()
 
+    portfolios: List[Portfolio] = []
 
     if args.wallet:
         wallets = get_wallets()
         if args.wallet == "all":
-            get_wallet_assets(wallets)
+            portfolios.extend(get_wallet_portfolios(wallets))
         else:
             print(f"Scanning wallet: {args.wallet} ...")
             tokens = wallets[args.wallet]
@@ -45,8 +54,12 @@ if __name__ == '__main__':
 
     if args.exchange:
         if args.exchange == "all":
-            get_exchange_assets()
+            portfolios.extend(get_exchange_portfolios())
         else:
             print(f"Scanning exchange: {args.exchange} ...")
             portfolio = Portfolio(args.exchange, "exchange")
+            portfolio.show_assets()
+
+    if len(portfolios):
+        for portfolio in portfolios:
             portfolio.show_assets()

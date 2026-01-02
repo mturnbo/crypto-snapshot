@@ -17,8 +17,6 @@ class Portfolio:
         self.get_assets()
 
     def get_assets(self):
-        self.assets = []
-
         match self.type.lower():
             case "exchange":
                 self.assets = AssetsService.get_exchange_assets(self.name)
