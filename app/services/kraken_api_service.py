@@ -27,26 +27,29 @@ class KrakenAPI:
         cmc_api_key = os.getenv('COINMARKETCAP_API_KEY')
         cmc = CoinMarketCapAPI(api_key=cmc_api_key)
 
-        return cmc.get_token_prices(symbols, currency='USD')
+        return cmc.get_token_prices(symbols=symbols, currency='USD')
 
 
     def get_portfolio_assets(self) -> List[Asset]:
         portfolio_data = self.get_portfolio_data()
         tokens = list(portfolio_data.keys())
         filtered_tokens = [token for token in tokens if '.' not in token]
+        print(filtered_tokens)
+
         prices = self.get_prices(filtered_tokens)
+        print(prices)
 
         assets = []
-        for asset, balance in portfolio_data.items():
-            if float(balance) > 0:
-                new_asset = Asset(
-                    name=asset,
-                    symbol=asset,
-                    balance=float(balance),
-                    price=prices.get(asset, 0),
-                    currency="USD"
-                )
-
-                assets.append(new_asset)
+        # for asset, balance in portfolio_data.items():
+        #     if float(balance) > 0:
+        #         new_asset = Asset(
+        #             name=asset,
+        #             symbol=asset,
+        #             balance=float(balance),
+        #             price=prices.get(asset, 0),
+        #             currency="USD"
+        #         )
+        #
+        #         assets.append(new_asset)
 
         return assets

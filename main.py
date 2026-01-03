@@ -47,7 +47,6 @@ if __name__ == '__main__':
         if args.wallet == "all":
             portfolios.extend(get_wallet_portfolios(wallets))
         else:
-            print(f"Scanning wallet: {args.wallet} ...")
             tokens = wallets[args.wallet]
             portfolio = Portfolio(args.wallet, "wallet", tokens)
             portfolio.show_assets()
@@ -56,7 +55,6 @@ if __name__ == '__main__':
         if args.exchange == "all":
             portfolios.extend(get_exchange_portfolios())
         else:
-            print(f"Scanning exchange: {args.exchange} ...")
             portfolio = Portfolio(args.exchange, "exchange")
             portfolio.show_assets()
 
@@ -65,4 +63,6 @@ if __name__ == '__main__':
         for portfolio in portfolios:
             for asset in portfolio.assets:
                 tokens.add(asset.symbol)
+            portfolio.show_assets()
+
         print(tokens)

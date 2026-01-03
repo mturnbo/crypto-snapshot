@@ -108,9 +108,14 @@ class CoinMarketCapAPI():
 
                     response = self.make_request('/cryptocurrency/quotes/latest', params)
 
-                    for symbol in symbols:
-                        if symbol in response['data']:
-                            token_prices[symbol] = float(response['data'][symbol][0]['quote'][currency]['price'])
+                    for symbol in group:
+                        if symbol in response['data'] and len(response['data'][symbol]) > 0:
+                            price = response['data'][symbol][0]['quote'][currency]['price']
+                            token_prices[symbol] = float(price) if price is not None else 0
+
+                        else:
+                            token_prices[symbol] = 0
+
 
                 return token_prices[symbols[0]] if len(token_prices) == 1 else token_prices
         except Exception as e:
