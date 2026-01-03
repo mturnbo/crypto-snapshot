@@ -32,7 +32,7 @@ class CoinMarketCapAPI():
         return self._session
 
 
-    def make_request(self, endpoint, params):
+    def make_request(self, endpoint: str, params):
         url = self.base_url + endpoint
 
         response_object = self.session.get(url, params=params, timeout=self.request_timeout)
@@ -46,10 +46,18 @@ class CoinMarketCapAPI():
             if isinstance(response, dict) and response_object.status_code == 200:
                 response[u'cached'] = response_object.from_cache
 
+            return response
+
+        except json.decoder.JSONDecodeError as e:
+            print(f"Error fetching from CoinMarketCap: {e}")
+            return response_object.text
+        except requests.exceptions.RequestException as e:
+            print(f"Error fetching from CoinMarketCap: {e}")
         except Exception as e:
+            print(f"Error fetching from CoinMarketCap: {e}")
             return e
 
-        return response
+        return {}
 
 
     def get_token_info(self, symbol: str = "") -> Dict[str, Any]:
@@ -79,34 +87,34 @@ class CoinMarketCapAPI():
         }
 
 
-    def get_token_price(self, symbol: str, currency: str = "USD") -> float:
-        params = {
-            'symbol': symbol,
-            'convert': currency,
-        }
-
-        response = self.make_request('/cryptocurrency/quotes/latest', params)
-
-        return response['data'][symbol][0]['quote'][currency]['price']
-
-
-    def get_token_prices(self, symbols: List, currency: str = "USD") -> Dict[str, float]:
-        token_prices: Dict[str, float] = {}
+    def get_token_prices(self, symbols: List[str], currency: str = "USD") -> float | Dict[str, float]:
+        endpoint = '/cryptocurrency/quotes/latest'
         try:
-            symbol_groups = split_list(symbols, 40)
-            for group in symbol_groups:
+            if len(symbols) == 1:
+                symbol = symbols[0]
                 params = {
-                    'symbol': ','.join(group),
+                    'symbol': symbols,
                     'convert': currency,
                 }
 
-                response = self.make_request('/cryptocurrency/quotes/latest', params)
+                response = self.make_request(endpoint, params)
+                return float(response['data'][symbol][0]['quote'][currency]['price'])
+            else:
+                token_prices: Dict[str, float] = {}
+                symbol_groups = split_list(symbols, 40)
+                for group in symbol_groups:
+                    params = {
+                        'symbol': ','.join(group),
+                        'convert': currency,
+                    }
 
-                for symbol in symbols:
-                    if symbol in response['data']:
-                        token_prices[symbol] = float(response['data'][symbol][0]['quote'][currency]['price'])
+                    response = self.make_request('/cryptocurrency/quotes/latest', params)
 
-        except requests.exceptions.RequestException as e:
+                    for symbol in symbols:
+                        if symbol in response['data']:
+                            token_prices[symbol] = float(response['data'][symbol][0]['quote'][currency]['price'])
+
+                return token_prices[symbols[0]] if len(token_prices) == 1 else token_prices
+        except Exception as e:
             print(f"Error fetching from CoinMarketCap: {e}")
-
-        return token_prices
+            return 0

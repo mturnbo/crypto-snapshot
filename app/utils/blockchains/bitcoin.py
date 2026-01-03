@@ -1,9 +1,10 @@
 import requests
 from app.models.asset import Asset
-from app.utils.price_data import get_token_price
+from app.services.cmc_api_service import CoinMarketCapAPI
+import os
+from dotenv import load_dotenv
 
-
-def get_btc_balance(address: str) -> Asset:
+def get_btc_balance(address: str, get_price: bool = True) -> Asset | None:
     try:
         # blockchain.info API
         url = f"https://blockchain.info/balance?active={address}"
@@ -15,7 +16,6 @@ def get_btc_balance(address: str) -> Asset:
         if address in data:
             balance_satoshi = data[address]['final_balance']
             balance_btc = balance_satoshi / 100000000  # Convert satoshi to BTC
-            usd_value = get_token_price('BTC')
 
             asset = Asset(
                 name="Bitcoin",
@@ -23,9 +23,11 @@ def get_btc_balance(address: str) -> Asset:
                 blockchain="bitcoin",
                 address=address,
                 balance=balance_btc,
-                price=usd_value,
                 currency="USD",
             )
+
+            if get_price:
+                asset.get_price('USD')
 
             return asset
         else:
