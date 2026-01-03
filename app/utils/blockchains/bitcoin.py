@@ -1,8 +1,5 @@
 import requests
 from app.models.asset import Asset
-from app.services.cmc_api_service import CoinMarketCapAPI
-import os
-from dotenv import load_dotenv
 
 def get_btc_balance(address: str, get_price: bool = True) -> Asset | None:
     try:

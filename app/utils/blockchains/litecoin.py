@@ -2,8 +2,7 @@ import requests
 from app.models.asset import Asset
 from app.utils.price_data import get_token_price
 
-
-def get_ltc_balance(address: str) -> Asset:
+def get_ltc_balance(address: str, get_price: bool = True) -> Asset:
     try:
         # BlockCypher API
         url = f"https://api.blockcypher.com/v1/ltc/main/addrs/{address}/balance"
@@ -14,7 +13,6 @@ def get_ltc_balance(address: str) -> Asset:
 
         # Convert from litoshi to LTC (1 LTC = 100,000,000 litoshi)
         balance_ltc = data['final_balance'] / 100000000
-        usd_value = get_token_price('LTC')
 
         if address == data['address']:
             asset = Asset(
@@ -23,9 +21,11 @@ def get_ltc_balance(address: str) -> Asset:
                 blockchain="litecoin",
                 address=address,
                 balance=balance_ltc,
-                price=usd_value,
                 currency="USD",
             )
+            
+            if get_price:
+                asset.get_price('USD')
 
             return asset
         else:

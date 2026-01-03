@@ -4,7 +4,7 @@ from app.utils.price_data import get_token_price
 
 BASE_API_URL = "https://polygon-rpc.com"
 
-def get_polygon_balance(wallet_address):
+def get_polygon_balance(wallet_address: str, get_price: bool = True):
     w3 = Web3(Web3.HTTPProvider(BASE_API_URL))
     balance_wei = w3.eth.get_balance(wallet_address)
     balance_polygon = float(w3.from_wei(balance_wei, 'ether'))
@@ -19,5 +19,8 @@ def get_polygon_balance(wallet_address):
         price=usd_value,
         currency="USD",
     )
+
+    if get_price:
+        asset.get_price('USD')
 
     return asset

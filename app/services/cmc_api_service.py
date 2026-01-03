@@ -34,9 +34,7 @@ class CoinMarketCapAPI():
 
     def make_request(self, endpoint: str, params):
         url = self.base_url + endpoint
-
         response_object = self.session.get(url, params=params, timeout=self.request_timeout)
-        print(response_object)
 
         try:
             response = json.loads(response_object.text)
