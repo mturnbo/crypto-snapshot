@@ -1,6 +1,5 @@
 import requests
 from app.models.asset import Asset
-from app.utils.price_data import get_token_price
 
 def get_ltc_balance(address: str, get_price: bool = True) -> Asset:
     try:

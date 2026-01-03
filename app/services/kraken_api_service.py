@@ -1,6 +1,8 @@
 from kraken.spot import User
 from app.models.asset import Asset
-from app.utils.price_data import get_token_prices
+from app.services.cmc_api_service import CoinMarketCapAPI
+import os
+from dotenv import load_dotenv
 from typing import Dict, List
 
 
@@ -20,11 +22,19 @@ class KrakenAPI:
             print("Please check your API keys and ensure they have 'Query funds' permission.")
 
 
+    def get_prices(self, symbols: List[str]) -> Dict[str, float]:
+        load_dotenv()
+        cmc_api_key = os.getenv('COINMARKETCAP_API_KEY')
+        cmc = CoinMarketCapAPI(api_key=cmc_api_key)
+
+        return cmc.get_token_prices(symbols, currency='USD')
+
+
     def get_portfolio_assets(self) -> List[Asset]:
         portfolio_data = self.get_portfolio_data()
         tokens = list(portfolio_data.keys())
         filtered_tokens = [token for token in tokens if '.' not in token]
-        prices = get_token_prices(filtered_tokens)
+        prices = self.get_prices(filtered_tokens)
 
         assets = []
         for asset, balance in portfolio_data.items():
