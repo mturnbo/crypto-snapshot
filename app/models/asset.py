@@ -24,6 +24,11 @@ class Asset(Token):
             "justification": "left",
             "value": self.symbol,
         }, {
+            "title": "Blockchain",
+            "justification": "left",
+            "value": self.blockchain,
+            "max_width": 10,
+        }, {
             "title": "Address",
             "justification": "left",
             "value": self.address,
@@ -31,7 +36,7 @@ class Asset(Token):
         }, {
             "title": "Balance",
             "justification": "right",
-            "value": f"{self.balance:,.8f}",
+            "value": f"{self.balance:,.4f}",
         }, {
             "title": "Price",
             "justification": "right",
@@ -45,8 +50,9 @@ class Asset(Token):
         })
         output.append({
             "title": "Currency",
-            "justification": "left",
-            "value": self.currency
+            "justification": "center",
+            "value": self.currency,
+            "max_width": 8,
         })
 
         return output
