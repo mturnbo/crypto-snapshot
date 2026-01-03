@@ -1,4 +1,7 @@
 from app.models.token import Token
+import os
+from dotenv import load_dotenv
+from app.services.cmc_api_service import CoinMarketCapAPI
 
 class Asset(Token):
     def __init__(self, name, symbol, blockchain=None, address="", balance=0, price=0, currency="USD"):
@@ -7,6 +10,13 @@ class Asset(Token):
         self.balance: float = balance
         self.price: float = price
         self.currency: str = currency
+
+    def get_price(self, currency: str = 'USD'):
+        load_dotenv()
+        cmc_api_key = os.getenv('COINMARKETCAP_API_KEY')
+        cmc = CoinMarketCapAPI(api_key=cmc_api_key)
+        usd_value = cmc.get_token_prices([self.symbol], currency)
+        self.price = usd_value
 
     def formatted_output(self):
         output = [{

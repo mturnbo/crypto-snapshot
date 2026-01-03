@@ -61,5 +61,8 @@ if __name__ == '__main__':
             portfolio.show_assets()
 
     if len(portfolios):
+        tokens = set()
         for portfolio in portfolios:
-            portfolio.show_assets()
+            for asset in portfolio.assets:
+                tokens.add(asset.symbol)
+        print(tokens)

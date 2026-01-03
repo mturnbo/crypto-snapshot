@@ -40,6 +40,7 @@ class Portfolio:
         console.print(table)
 
     def show_assets(self):
+        self.assets = [asset for asset in self.assets if asset is not None]
         if not self.assets:
             return
 
