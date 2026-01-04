@@ -49,20 +49,15 @@ if __name__ == '__main__':
         else:
             tokens = wallets[args.wallet]
             portfolio = Portfolio(args.wallet, "wallet", tokens)
-            portfolio.show_assets()
+            portfolios.append(portfolio)
 
     if args.exchange:
         if args.exchange == "all":
             portfolios.extend(get_exchange_portfolios())
         else:
             portfolio = Portfolio(args.exchange, "exchange")
-            portfolio.show_assets()
+            portfolios.append(portfolio)
 
     if len(portfolios):
-        tokens = set()
         for portfolio in portfolios:
-            for asset in portfolio.assets:
-                tokens.add(asset.symbol)
             portfolio.show_assets()
-
-        print(tokens)
