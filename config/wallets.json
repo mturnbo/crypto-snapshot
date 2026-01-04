@@ -15,6 +15,12 @@
     "POL": "0xa24F6404A198809980f0E37fdafFf2f70f717adb"
   },
   "ledger_x": {
+    "BTC": "bc1qdhw4gdg9ranqqf8nu7ze9u9ygga3sgfhwwlrum",
+    "ERC20": "0x4e318751e836A879B3410738Fc9361c1225852ca",
+    "POL": "0x4e318751e836A879B3410738Fc9361c1225852ca",
+    "TRX": "TCH2wcbFtuLvBjk2TZmbFXsXqjWbsFnoe9",
+    "DOGE": "DSNHhneTtoqbuF6bHNAG1aQ3Zi6vkAyQaa",
+    "ADA": "addr1qxjpu6mufyrlgnxkxxhfhwa57hxuphu78wfsuhlml8n6km7t0ld353hmsx9p427rswgvwsxfqkhcn7fhstrrpu9m5pus0zq85c",
     "XRP": "rDSmwboDgF3iQdifSdVPApcRf3SrSyoBaH"
   },
   "ledger_s": {
