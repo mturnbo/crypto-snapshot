@@ -102,10 +102,10 @@ class DummyKrakenUser:
 kraken_spot_stub.User = DummyKrakenUser
 sys.modules.setdefault("kraken.spot", kraken_spot_stub)
 
-from app.services.binance_api import BinanceUSAPI
-from app.services.cmc_api import CoinMarketCapAPI
-from app.services.coinbase_api import CoinbaseAPI
-from app.services import kraken_api
+from app.services.binance_api_service import BinanceUSAPI
+from app.services.cmc_api_service import CoinMarketCapAPI
+from app.services.coinbase_api_service import CoinbaseAPI
+from app.services.kraken_api_service import KrakenAPI
 
 
 def test_binance_signature_matches_expected():
@@ -232,10 +232,10 @@ def test_coinbase_build_jwt_returns_token():
 
 
 def test_kraken_get_portfolio_assets_uses_prices(monkeypatch):
-    api = kraken_api.KrakenAPI("key", "secret")
+    api = KrakenAPI("key", "secret")
 
     monkeypatch.setattr(api, "get_portfolio_data", lambda: {"BTC": "1.5", "ETH2.S": "2"})
-    monkeypatch.setattr(kraken_api, "get_token_prices", lambda tokens: {"BTC": 100})
+    monkeypatch.setattr(KrakenAPI, "get_prices", lambda tokens: {"BTC": 100})
 
     assets = api.get_portfolio_assets()
 
