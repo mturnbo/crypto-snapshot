@@ -2,6 +2,7 @@ from app.models.token import Token
 import os
 from dotenv import load_dotenv
 from app.services.cmc_api_service import CoinMarketCapAPI
+from typing import List
 
 class Asset(Token):
     def __init__(self, name, symbol, blockchain=None, address="", balance=0, price=0, currency="USD"):
@@ -18,8 +19,9 @@ class Asset(Token):
         usd_value = cmc.get_token_prices([self.symbol], currency)
         self.price = usd_value
 
-    def formatted_output(self):
-        output = [{
+    def formatted_output(self, included_fields: List[str]=['symbol', 'balance', 'price', 'value']):
+        total_value = self.balance * self.price if self.price is not None else 0
+        formatted_fields = [{
             "title": "Symbol",
             "justification": "left",
             "value": self.symbol,
@@ -41,18 +43,17 @@ class Asset(Token):
             "title": "Price",
             "justification": "right",
             "value": f"{self.price:.8f}" if self.price is not None else "N/A",
-        }]
-        total_value = self.balance * self.price if self.price is not None else 0
-        output.append({
+        }, {
             "title": "Value",
             "justification": "right",
             "value": f"${total_value:,.2f}" if total_value is not None else "N/A",
-        })
-        output.append({
+        }, {
             "title": "Currency",
             "justification": "center",
             "value": self.currency,
             "max_width": 8,
-        })
+        }]
 
-        return output
+        # return filtered list containing only fields matching included_fields
+        titles_lower = [title.lower() for title in included_fields]
+        return [item for item in formatted_fields if item.get("title").lower() in titles_lower]
