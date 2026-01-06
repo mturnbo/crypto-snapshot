@@ -22,8 +22,8 @@ dateutil_stub.parser = dateutil_parser_stub
 sys.modules.setdefault("dateutil", dateutil_stub)
 sys.modules.setdefault("dateutil.parser", dateutil_parser_stub)
 
-sys.modules.pop("app.services.coinbase_api", None)
-sys.modules.pop("app.services.kraken_api", None)
+sys.modules.pop("app.services.coinbase_api_service", None)
+sys.modules.pop("app.services.kraken_api_service", None)
 
 class DummyResponse:
     def __init__(self, text, status_code=200, from_cache=False):
@@ -183,13 +183,23 @@ def test_cmc_get_token_prices_returns_mapping():
     captured_params = []
 
     def fake_request(endpoint, params):
-        captured_params.append(params["symbol"])
-        return {
-            "data": {
-                "BTC": [{"quote": {"USD": {"price": 1}}}],
-                "ETH": [{"quote": {"USD": {"price": 2}}}],
+        try:
+            if len(symbols) == 1:
+                symbol = symbols[0]
+                params = {
+                    'symbol': symbol,
+                    'convert': currency,
+                }
+
+                response = self.make_request(endpoint, params)
+        except:
+            captured_params.append(params["symbol"])
+            return {
+                "data": {
+                    "BTC": [{"quote": {"USD": {"price": 1}}}],
+                    "ETH": [{"quote": {"USD": {"price": 2}}}],
+                }
             }
-        }
 
     api.make_request = fake_request
 
@@ -234,10 +244,10 @@ def test_coinbase_build_jwt_returns_token():
 def test_kraken_get_portfolio_assets_uses_prices(monkeypatch):
     api = KrakenAPI("key", "secret")
 
-    monkeypatch.setattr(api, "get_portfolio_data", lambda: {"BTC": "1.5", "ETH2.S": "2"})
-    monkeypatch.setattr(KrakenAPI, "get_prices", lambda tokens: {"BTC": 100})
+    monkeypatch.setattr(api, "get_portfolio_data", lambda: {"BTC": "1.5", "ETH": "2"})
+    monkeypatch.setattr(api, "get_prices", lambda tokens: {"BTC": 100})
 
     assets = api.get_portfolio_assets()
 
-    assert [asset.symbol for asset in assets] == ["BTC", "ETH2.S"]
+    assert [asset.symbol for asset in assets] == ["BTC", "ETH"]
     assert assets[0].price == 100

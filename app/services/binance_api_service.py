@@ -41,10 +41,14 @@ class BinanceUSAPI():
         mac = hmac.new(byte_key, message, hashlib.sha256).hexdigest()
         return mac
 
-    def make_request(self, endpoint: str, params, use_signature: bool = True):
+
+    def make_request(self, endpoint: str, params=None, use_signature: bool = True):
+        if params is None:
+            params = {}
         url = self.base_url + endpoint
-        signature = self.get_binanceus_signature(params)
+
         if use_signature:
+            signature = self.get_binanceus_signature(params)
             params['signature'] = signature
 
         response_object = self.session.get(url, params=params, timeout=self.request_timeout)

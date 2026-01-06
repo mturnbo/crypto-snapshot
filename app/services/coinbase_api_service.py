@@ -78,7 +78,10 @@ class CoinbaseAPI():
 
         assets = []
         for position in portfolio_data['breakdown']['spot_positions']:
-            crypto_price = position['total_balance_fiat'] / position['total_balance_crypto']
+            balance = position['total_balance_crypto']
+            fiat_val = position['total_balance_fiat']
+            crypto_price = fiat_val / balance if balance > 0 else 0
+
             assets.append(Asset(
                 name=position['asset'],
                 symbol=position['asset'],
