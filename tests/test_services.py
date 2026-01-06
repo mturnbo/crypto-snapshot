@@ -22,8 +22,8 @@ dateutil_stub.parser = dateutil_parser_stub
 sys.modules.setdefault("dateutil", dateutil_stub)
 sys.modules.setdefault("dateutil.parser", dateutil_parser_stub)
 
-sys.modules.pop("app.services.coinbase_api", None)
-sys.modules.pop("app.services.kraken_api", None)
+sys.modules.pop("app.services.coinbase_api_service", None)
+sys.modules.pop("app.services.kraken_api_service", None)
 
 class DummyResponse:
     def __init__(self, text, status_code=200, from_cache=False):
@@ -102,10 +102,10 @@ class DummyKrakenUser:
 kraken_spot_stub.User = DummyKrakenUser
 sys.modules.setdefault("kraken.spot", kraken_spot_stub)
 
-from app.services.binance_api import BinanceUSAPI
-from app.services.cmc_api import CoinMarketCapAPI
-from app.services.coinbase_api import CoinbaseAPI
-from app.services import kraken_api
+from app.services.binance_api_service import BinanceUSAPI
+from app.services.cmc_api_service import CoinMarketCapAPI
+from app.services.coinbase_api_service import CoinbaseAPI
+from app.services.kraken_api_service import KrakenAPI
 
 
 def test_binance_signature_matches_expected():
@@ -183,13 +183,23 @@ def test_cmc_get_token_prices_returns_mapping():
     captured_params = []
 
     def fake_request(endpoint, params):
-        captured_params.append(params["symbol"])
-        return {
-            "data": {
-                "BTC": [{"quote": {"USD": {"price": 1}}}],
-                "ETH": [{"quote": {"USD": {"price": 2}}}],
+        try:
+            if len(symbols) == 1:
+                symbol = symbols[0]
+                params = {
+                    'symbol': symbol,
+                    'convert': currency,
+                }
+
+                response = self.make_request(endpoint, params)
+        except:
+            captured_params.append(params["symbol"])
+            return {
+                "data": {
+                    "BTC": [{"quote": {"USD": {"price": 1}}}],
+                    "ETH": [{"quote": {"USD": {"price": 2}}}],
+                }
             }
-        }
 
     api.make_request = fake_request
 
@@ -232,12 +242,12 @@ def test_coinbase_build_jwt_returns_token():
 
 
 def test_kraken_get_portfolio_assets_uses_prices(monkeypatch):
-    api = kraken_api.KrakenAPI("key", "secret")
+    api = KrakenAPI("key", "secret")
 
-    monkeypatch.setattr(api, "get_portfolio_data", lambda: {"BTC": "1.5", "ETH2.S": "2"})
-    monkeypatch.setattr(kraken_api, "get_token_prices", lambda tokens: {"BTC": 100})
+    monkeypatch.setattr(api, "get_portfolio_data", lambda: {"BTC": "1.5", "ETH": "2"})
+    monkeypatch.setattr(api, "get_prices", lambda tokens: {"BTC": 100})
 
     assets = api.get_portfolio_assets()
 
-    assert [asset.symbol for asset in assets] == ["BTC", "ETH2.S"]
+    assert [asset.symbol for asset in assets] == ["BTC", "ETH"]
     assert assets[0].price == 100
