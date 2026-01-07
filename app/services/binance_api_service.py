@@ -85,20 +85,3 @@ class BinanceUSAPI():
         ticker = self.make_request(endpoint, params, False)
 
         return ticker
-
-
-from dotenv import load_dotenv
-from rich.pretty import pprint
-
-load_dotenv()
-
-API_KEY = os.getenv('BINANCEUS_API_KEY')
-API_SECRET = os.getenv('BINANCEUS_API_SECRET')
-
-bapi = BinanceUSAPI(API_KEY, API_SECRET)
-
-# balances = bapi.get_portfolio_data()
-# pprint(balances)
-
-tp = bapi.get_ticker_price('ADABTC')
-pprint(tp)

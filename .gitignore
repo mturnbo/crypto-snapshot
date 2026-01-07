@@ -33,7 +33,7 @@ package-lock.json
 ### Build / Export ###
 build/
 dist/
-export/
+data/
 
 ### Test ###
 __snapshots__/
