@@ -50,7 +50,11 @@ class Portfolio:
         column_titles = list(self.assets[0].__dict__.keys())
         column_titles.insert(-1, "USD Value")
 
-        for item in self.assets[0].formatted_output():
+        included_fields = ['symbol', 'balance', 'price', 'value']
+        if self.type == "wallet":
+            included_fields.extend(['blockchain', 'address'])
+
+        for item in self.assets[0].formatted_output(included_fields):
             table.add_column(
                 item["title"],
                 justify=item["justification"],
@@ -60,7 +64,7 @@ class Portfolio:
 
         total_value = 0
         for asset in self.assets:
-            values = [d["value"] for d in asset.formatted_output()]
+            values = [d["value"] for d in asset.formatted_output(included_fields)]
             if asset.price is not None:
                 total_value += asset.price * asset.balance
             table.add_row(*values)
