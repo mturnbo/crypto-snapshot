@@ -1,5 +1,4 @@
 import os
-from dotenv import load_dotenv
 from app.models.asset import Asset
 from typing import List, Dict
 from rich.console import Console
@@ -14,15 +13,20 @@ class Portfolio:
         self.type: str = portfolio_type
         self.addresses: Dict[str, str] = address_list
         self.assets: List[Asset] = []
+        self.console = Console()
         self.get_assets()
 
+
     def get_assets(self):
-        print(f"Retrieving assets for {self.type}: {self.name} ...")
-        match self.type.lower():
-            case "exchange":
-                self.assets = AssetsService.get_exchange_assets(self.name)
-            case "wallet":
-                self.assets = AssetsService.get_wallet_assets(self.addresses)
+        # self.console.clear()
+        # self.console.print("[yellow] f"Retrieving assets for {self.type}: {self.name} ...")
+        # print(f"Retrieving assets for {self.type}: {self.name} ...")
+        with self.console.status(f"Retrieving assets for {self.type}: {self.name} ...", spinner="dots"):
+            match self.type.lower():
+                case "exchange":
+                    self.assets = AssetsService.get_exchange_assets(self.name)
+                case "wallet":
+                    self.assets = AssetsService.get_wallet_assets(self.addresses)
 
     def add_asset(self, asset: Asset):
         self.assets.append(asset)
@@ -31,21 +35,21 @@ class Portfolio:
         self.assets = [x for x in self.assets if x.name != asset_name]
 
     def show_addresses(self):
-        console = Console()
+        # console = Console()
         table = Table(show_header=True, header_style="bold magenta")
         table.title = f"{self.name} Portfolio Addresses"
         table.add_column("Blockchain", justify="left", min_width=12)
         table.add_column("Address", justify="left", min_width=40)
         for blockchain, address in self.addresses.items():
             table.add_row(blockchain, address)
-        console.print(table)
+        self.console.print(table)
 
     def show_assets(self):
         self.assets = [asset for asset in self.assets if asset is not None]
         if not self.assets:
             return
 
-        console = Console()
+        # console = Console()
         table = Table(show_header=True, header_style="bold magenta")
         column_titles = list(self.assets[0].__dict__.keys())
         column_titles.insert(-1, "USD Value")
@@ -70,21 +74,25 @@ class Portfolio:
             table.add_row(*values)
 
         table.title = f"{self.name.capitalize()} Portfolio - Total Value: ${total_value:.2f}"
-        console.print(table)
+        self.console.print(table)
 
     def export_assets(self):
-        utc_timestamp = datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S")
-        directory = "data/export/" + datetime.now(timezone.utc).strftime("%Y-%m")
+        utc_now = datetime.now(timezone.utc)
+        file_timestamp = utc_now.strftime("%Y%m%d%H%M%S")
+        data_timestamp = utc_now.strftime("%Y-%m-%d %H:%M:%S")
+        directory = "data/export/" + utc_now.strftime("%Y-%m")
+        style = "bold yellow"
 
         try:
             if not os.path.exists(directory):
                 os.makedirs(directory)
-            file_path = f"{directory}/{self.type}_{self.name.lower()}_{utc_timestamp}.csv"
+            file_path = f"{directory}/{self.type}_{self.name.lower()}_{file_timestamp}.csv"
             with open(file_path, 'w', newline='') as csvfile:
                 writer = csv.writer(csvfile)
-                writer.writerow(['Symbol', 'Balance', 'Price'])
+                writer.writerow(['Symbol', 'Balance', 'Price', 'Currency', 'Snapshot Date'])
                 for asset in self.assets:
-                    writer.writerow([asset.symbol, asset.balance, asset.price])
-            print(f"{self.name} assets exported to {file_path}")
+                    if asset.symbol and asset.balance:
+                        writer.writerow([asset.symbol, asset.balance, asset.price, asset.currency, data_timestamp])
+            self.console.print(f"{self.name} assets exported to {file_path}\n\n", style=style)
         except Exception as e:
             print(f"Error exporting assets: {e}")
