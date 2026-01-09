@@ -76,4 +76,6 @@ if __name__ == '__main__':
 
     if len(portfolios):
         for portfolio in portfolios:
+            if args.operation == "save":
+                portfolio.export_assets()
             portfolio.show_assets()

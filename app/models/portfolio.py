@@ -74,9 +74,17 @@ class Portfolio:
 
     def export_assets(self):
         utc_timestamp = datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S")
-        file_path = f"export/{self.type}.{self.name.lower()}.{utc_timestamp}.csv"
-        with open(file_path, 'w', newline='') as csvfile:
-            writer = csv.writer(csvfile)
-            writer.writerow(['Symbol', 'ID', 'Balance', 'Price'])
-            for asset in self.assets:
-                writer.writerow([asset.symbol, asset.id, asset.balance, asset.price])
+        directory = "data/export/" + datetime.now(timezone.utc).strftime("%Y-%m")
+
+        try:
+            if not os.path.exists(directory):
+                os.makedirs(directory)
+            file_path = f"{directory}/{self.type}_{self.name.lower()}_{utc_timestamp}.csv"
+            with open(file_path, 'w', newline='') as csvfile:
+                writer = csv.writer(csvfile)
+                writer.writerow(['Symbol', 'Balance', 'Price'])
+                for asset in self.assets:
+                    writer.writerow([asset.symbol, asset.balance, asset.price])
+            print(f"{self.name} assets exported to {file_path}")
+        except Exception as e:
+            print(f"Error exporting assets: {e}")
