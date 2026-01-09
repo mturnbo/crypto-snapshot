@@ -1,7 +1,7 @@
 from app.models.token import Token
 import os
 from dotenv import load_dotenv
-from app.services.cmc_api_service import CoinMarketCapAPI
+from app.services.api.cmc_api_service import CoinMarketCapAPI
 from typing import List
 
 class Asset(Token):

@@ -8,8 +8,8 @@ from app.utils.blockchains.cardano import get_wallet_assets as get_cardano_asset
 from app.utils.blockchains.erc20 import get_wallet_assets as get_erc20_assets
 from app.utils.blockchains.solana import get_wallet_assets as get_solana_assets
 from app.utils.blockchains.tron import get_tron_wallet_info as get_tron_balance
-from app.services.coinbase_api_service import CoinbaseAPI
-from app.services.kraken_api_service import KrakenAPI
+from app.services.api.coinbase_api_service import CoinbaseAPI
+from app.services.api.kraken_api_service import KrakenAPI
 from typing import List, Dict
 
 class AssetsService():

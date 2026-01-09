@@ -1,6 +1,6 @@
 from kraken.spot import User
 from app.models.asset import Asset
-from app.services.cmc_api_service import CoinMarketCapAPI
+from app.services.api.cmc_api_service import CoinMarketCapAPI
 import os
 from dotenv import load_dotenv
 from typing import Dict, List

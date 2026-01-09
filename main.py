@@ -2,7 +2,19 @@ import os
 import json
 from app.models.portfolio import Portfolio
 import argparse
-from typing import List, Dict
+from typing import List
+from dotenv import load_dotenv
+from app.services.api.cmc_api_service import CoinMarketCapAPI
+
+load_dotenv()
+
+def get_token_info(symbol: str, save_to_file: bool = False):
+    api_key = os.getenv('COINMARKETCAP_API_KEY')
+    cmc = CoinMarketCapAPI(api_key=api_key)
+    info = cmc.get_token_info(symbol=symbol, save_to_file=save_to_file)
+
+    return info
+
 
 def get_wallets():
     file_path = os.path.join('config', 'wallets.json')
@@ -17,7 +29,6 @@ def get_wallet_portfolios(wallets):
     for wallet, tokens in wallets.items():
         portfolio = Portfolio(wallet, "wallet", tokens)
         portfolio_list.append(portfolio)
-        # portfolio.show_assets()
 
     return portfolio_list
 
@@ -38,9 +49,14 @@ if __name__ == '__main__':
     parser.add_argument("--wallet", type=str, required=False, help="Name of wallet to scan")
     parser.add_argument("--exchange", type=str, required=False, help="Name of exchange to scan")
     parser.add_argument("--blockchain", type=str, required=False, help="Name of blockchain to scan")
+    parser.add_argument("--info", type=str, required=False, help="Name of token to get info for")
     args = parser.parse_args()
 
     portfolios: List[Portfolio] = []
+
+    if args.info:
+        info = get_token_info(args.info, True)
+        print(info)
 
     if args.wallet:
         wallets = get_wallets()
