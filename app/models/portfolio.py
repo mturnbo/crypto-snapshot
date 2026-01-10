@@ -1,6 +1,7 @@
 import os
 from app.models.asset import Asset
 from typing import List, Dict
+from rich import box
 from rich.console import Console
 from rich.table import Table
 from app.services.assets_service import AssetsService
@@ -50,7 +51,7 @@ class Portfolio:
             return
 
         # console = Console()
-        table = Table(show_header=True, header_style="bold magenta")
+        table = Table(show_header=True, header_style="bold magenta", box=box.SQUARE_DOUBLE_HEAD, title_justify="left")
         column_titles = list(self.assets[0].__dict__.keys())
         column_titles.insert(-1, "USD Value")
 
