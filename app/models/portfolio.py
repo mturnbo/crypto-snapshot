@@ -29,8 +29,10 @@ class Portfolio:
                 case "wallet":
                     self.assets = AssetsService.get_wallet_assets(self.addresses)
 
+
     def add_asset(self, asset: Asset):
         self.assets.append(asset)
+
 
     def remove_asset(self, asset_name: str):
         self.assets = [x for x in self.assets if x.name != asset_name]
