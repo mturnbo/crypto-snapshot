@@ -19,9 +19,6 @@ class Portfolio:
 
 
     def get_assets(self):
-        # self.console.clear()
-        # self.console.print("[yellow] f"Retrieving assets for {self.type}: {self.name} ...")
-        # print(f"Retrieving assets for {self.type}: {self.name} ...")
         with self.console.status(f"Retrieving assets for {self.type}: {self.name} ...", spinner="dots"):
             match self.type.lower():
                 case "exchange":
@@ -61,14 +58,14 @@ class Portfolio:
 
         total_value = self.total_value()
 
-        table = Table(show_header=True, show_footer=True, header_style="bold magenta", box=box.SQUARE_DOUBLE_HEAD, title_justify="left")
+        table = Table(show_header=True, header_style="bold magenta", box=box.SQUARE_DOUBLE_HEAD, title_justify="left")
         table.title = f"{self.name.capitalize()} Portfolio - Total Value: ${total_value:.2f}"
 
         included_fields = ['symbol', 'balance', 'price', 'value']
         if self.type == "wallet":
             included_fields.extend(['blockchain', 'address'])
 
-        for item in self.assets[0].formatted_output(included_fields):
+        for item in self.assets[0].table_format(included_fields):
             table.add_column(
                 item["title"],
                 justify=item["justification"],
@@ -77,7 +74,7 @@ class Portfolio:
             )
 
         for asset in self.assets:
-            values = [d["value"] for d in asset.formatted_output(included_fields)]
+            values = [d["value"] for d in asset.table_format(included_fields)]
             table.add_row(*values)
 
         self.console.print(table)
