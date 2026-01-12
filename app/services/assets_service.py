@@ -1,14 +1,14 @@
 import os
 from dotenv import load_dotenv
 from app.models.asset import Asset
-from app.utils.blockchains.bitcoin import get_btc_balance
-from app.utils.blockchains.litecoin import get_ltc_balance
-from app.utils.blockchains.polygon import get_polygon_balance
+from app.utils.blockchains.bitcoin import get_btc_asset
+from app.utils.blockchains.litecoin import get_ltc_asset
+from app.utils.blockchains.polygon import get_polygon_assets
 from app.utils.blockchains.cardano import get_wallet_assets as get_cardano_assets
 from app.utils.blockchains.erc20 import get_wallet_assets as get_erc20_assets
-from app.utils.blockchains.solana import get_wallet_assets as get_solana_assets
-from app.utils.blockchains.tron import get_tron_asset as get_tron_balance
-from app.utils.blockchains.xrp import get_xrp_asset as get_xrp_balance
+from app.utils.blockchains.solana import get_sol_assets
+from app.utils.blockchains.tron import get_tron_asset
+from app.utils.blockchains.xrp import get_xrp_asset
 from app.services.api.coinbase_api_service import CoinbaseAPI
 from app.services.api.kraken_api_service import KrakenAPI
 from typing import List, Dict
@@ -25,21 +25,21 @@ class AssetsService():
             new_assets = []
             match blockchain.lower():
                 case "btc":
-                    new_assets = [get_btc_balance(address)]
+                    new_assets = [get_btc_asset(address)]
                 case "ltc":
-                    new_assets = [get_ltc_balance(address)]
+                    new_assets = [get_ltc_asset(address)]
                 case "ada":
                     new_assets = get_cardano_assets(address)
                 case "erc20":
                     new_assets = get_erc20_assets(address)
                 case "sol":
-                    new_assets = get_solana_assets(address)
+                    new_assets = get_sol_assets(address)
                 case "pol":
-                    new_assets = [get_polygon_balance(address)]
+                    new_assets = [get_polygon_assets(address)]
                 case "trx":
-                    new_assets = [get_tron_balance(address)]
+                    new_assets = [get_tron_asset(address)]
                 case "xrp":
-                    new_assets = [get_xrp_balance(address)]
+                    new_assets = [get_xrp_asset(address)]
 
             assets.extend(new_assets)
 
