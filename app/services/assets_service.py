@@ -7,10 +7,13 @@ from app.utils.blockchains.polygon import get_polygon_balance
 from app.utils.blockchains.cardano import get_wallet_assets as get_cardano_assets
 from app.utils.blockchains.erc20 import get_wallet_assets as get_erc20_assets
 from app.utils.blockchains.solana import get_wallet_assets as get_solana_assets
-from app.utils.blockchains.tron import get_tron_wallet_info as get_tron_balance
+from app.utils.blockchains.tron import get_tron_asset as get_tron_balance
+from app.utils.blockchains.xrp import get_xrp_asset as get_xrp_balance
 from app.services.api.coinbase_api_service import CoinbaseAPI
 from app.services.api.kraken_api_service import KrakenAPI
 from typing import List, Dict
+
+
 
 class AssetsService():
 
@@ -35,6 +38,8 @@ class AssetsService():
                     new_assets = [get_polygon_balance(address)]
                 case "trx":
                     new_assets = [get_tron_balance(address)]
+                case "xrp":
+                    new_assets = [get_xrp_balance(address)]
 
             assets.extend(new_assets)
 

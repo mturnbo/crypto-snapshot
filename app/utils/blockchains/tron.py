@@ -1,4 +1,3 @@
-from dotenv import load_dotenv
 import requests
 from app.models.asset import Asset
 from typing import Optional
@@ -26,7 +25,7 @@ def get_tron_balance(wallet_address: str) -> Optional[float]:
         return None
 
 
-def get_tron_wallet_info(wallet_address: str, get_price: bool = True) -> Asset:
+def get_tron_asset(wallet_address: str, get_price: bool = True) -> Asset:
     balance = get_tron_balance(wallet_address)
 
     asset = Asset(
