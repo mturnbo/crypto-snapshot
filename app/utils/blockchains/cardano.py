@@ -27,7 +27,7 @@ def get_cardano_assets(wallet_address: str) -> List[Asset]:
     if wallet_data.get("balance"):
         for token in wallet_data["balance"]:
             asset_info = token.get("asset", {})
-            if asset_info.get("token_id", ""):
+            if asset_info.get("token_id", "") and asset_info.get("ticker", ""):
                 ada_value = float(asset_info.get("price_by_ada", 0))
                 usd_value = ada_value * ada_price
                 asset = Asset(
