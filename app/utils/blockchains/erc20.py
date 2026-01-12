@@ -4,7 +4,7 @@ from app.models.asset import Asset
 
 BASE_API_URL = "https://api.ethplorer.io/getAddressInfo/__ADDRESS__?apiKey=freekey"
 
-def get_wallet_assets(wallet_address: str) -> List[Asset]:
+def get_erc20_assets(wallet_address: str) -> List[Asset]:
     api_url = BASE_API_URL.replace("__ADDRESS__", wallet_address)
     response = requests.get(api_url)
     wallet_data = response.json()
@@ -24,7 +24,7 @@ def get_wallet_assets(wallet_address: str) -> List[Asset]:
         )
         wallet_assets.append(asset)
 
-    # get tokens
+    # get ERC20 tokens
     for token in wallet_data.get("tokens", []):
         asset_info = token.get("tokenInfo", {})
         if asset_info.get("symbol", "") and asset_info.get("price", ""):

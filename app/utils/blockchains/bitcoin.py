@@ -1,7 +1,7 @@
 import requests
 from app.models.asset import Asset
 
-def get_btc_balance(address: str, get_price: bool = True) -> Asset | None:
+def get_btc_balance(address: str) -> float | None:
     try:
         # blockchain.info API
         url = f"https://blockchain.info/balance?active={address}"
@@ -12,21 +12,8 @@ def get_btc_balance(address: str, get_price: bool = True) -> Asset | None:
 
         if address in data:
             balance_satoshi = data[address]['final_balance']
-            balance_btc = balance_satoshi / 100000000  # Convert satoshi to BTC
+            return balance_satoshi / 100000000  # Convert satoshi to BTC
 
-            asset = Asset(
-                name="Bitcoin",
-                symbol="BTC",
-                blockchain="bitcoin",
-                address=address,
-                balance=balance_btc,
-                currency="USD",
-            )
-
-            if get_price:
-                asset.get_price('USD')
-
-            return asset
         else:
             print(f"Address {address} not found in response")
             return None
@@ -37,3 +24,21 @@ def get_btc_balance(address: str, get_price: bool = True) -> Asset | None:
     except Exception as e:
         print(f"Unexpected error: {e}")
         return None
+
+
+def get_btc_asset(wallet_address: str, get_price: bool = True) -> Asset:
+    btc_balance = get_btc_balance(wallet_address)
+
+    asset = Asset(
+        name="Bitcoin",
+        symbol="BTC",
+        blockchain="bitcoin",
+        address=wallet_address,
+        balance=btc_balance,
+        currency="USD",
+    )
+
+    if get_price:
+        asset.get_price('USD')
+
+    return asset
