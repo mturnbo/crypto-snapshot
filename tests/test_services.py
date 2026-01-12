@@ -102,10 +102,10 @@ class DummyKrakenUser:
 kraken_spot_stub.User = DummyKrakenUser
 sys.modules.setdefault("kraken.spot", kraken_spot_stub)
 
-from app.services.binance_api_service import BinanceUSAPI
-from app.services.cmc_api_service import CoinMarketCapAPI
-from app.services.coinbase_api_service import CoinbaseAPI
-from app.services.kraken_api_service import KrakenAPI
+from app.services.api.binance_api_service import BinanceUSAPI
+from app.services.api.cmc_api_service import CoinMarketCapAPI
+from app.services.api.coinbase_api_service import CoinbaseAPI
+from app.services.api.kraken_api_service import KrakenAPI
 
 
 def test_binance_signature_matches_expected():

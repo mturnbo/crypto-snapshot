@@ -58,12 +58,34 @@ class CoinMarketCapAPI():
         return {}
 
 
-    def get_token_info(self, symbol: str = "") -> Dict[str, Any]:
+    def get_token_info(self, symbol: str = "", save_to_file: bool = False) -> Dict[str, Any]:
         params = {
             'symbol': symbol,
         }
 
         response = self.make_request('/cryptocurrency/info', params)
+
+        if response['data'][symbol] is None:
+            return {}
+
+        if save_to_file:
+            try:
+                # Ensure the app/data directory exists
+                data_dir = os.path.join('data')
+                os.makedirs(data_dir, exist_ok=True)
+
+                # Create filename based on symbol
+                filename = os.path.join(data_dir, f'{symbol.lower()}.json')
+
+                # Write the full response to file
+                with open(filename, 'w') as f:
+                    json.dump(response, f, indent=2)
+
+                print(f"Token info for {symbol} saved to {filename}")
+            except Exception as e:
+                print(f"Error saving token info to file: {e}")
+
+
         data = response['data'][symbol][0]
 
         contracts: List[Dict] = []
@@ -81,7 +103,7 @@ class CoinMarketCapAPI():
             'logo': data['logo'],
             'date_launched': data['date_launched'],
             'contracts': contracts,
-            'circulating_supply': float(data['self_reported_circulating_supply']),
+            'circulating_supply': float(data['self_reported_circulating_supply']) if data['self_reported_circulating_supply'] is not None else 0.0,
         }
 
 

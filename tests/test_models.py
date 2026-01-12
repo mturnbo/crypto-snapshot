@@ -85,7 +85,7 @@ def test_token_defaults_and_fields():
 def test_asset_formatted_output_with_price():
     asset = Asset(name="Bitcoin", symbol="BTC", blockchain="Bitcoin", address="addr", balance=1.5, price=20000)
 
-    output = asset.formatted_output()
+    output = asset.table_format()
 
     assert output[0]["value"] == "BTC"
     assert output[1]["value"] == "Bitcoin"
@@ -99,7 +99,7 @@ def test_asset_formatted_output_with_price():
 def test_asset_formatted_output_without_price():
     asset = Asset(name="Bitcoin", symbol="BTC", address="addr", balance=1.5, price=None)
 
-    output = asset.formatted_output()
+    output = asset.table_format()
 
     assert output[4]["value"] == "N/A"
 

@@ -1,7 +1,7 @@
 from app.models.token import Token
 import os
 from dotenv import load_dotenv
-from app.services.cmc_api_service import CoinMarketCapAPI
+from app.services.api.cmc_api_service import CoinMarketCapAPI
 from typing import List
 
 class Asset(Token):
@@ -19,7 +19,7 @@ class Asset(Token):
         usd_value = cmc.get_token_prices([self.symbol], currency)
         self.price = usd_value
 
-    def formatted_output(self, included_fields: List[str]=['symbol', 'balance', 'price', 'value']):
+    def table_format(self, included_fields: List[str]=['symbol', 'balance', 'price', 'value']):
         total_value = self.balance * self.price if self.price is not None else 0
         formatted_fields = [{
             "title": "Symbol",
