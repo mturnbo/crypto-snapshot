@@ -35,6 +35,12 @@ class Portfolio:
     def remove_asset(self, asset_name: str):
         self.assets = [x for x in self.assets if x.name != asset_name]
 
+
+    def total_value(self):
+        total = sum(asset.price * asset.balance for asset in self.assets if asset.price is not None)
+        return total
+
+
     def show_addresses(self):
         # console = Console()
         table = Table(show_header=True, header_style="bold magenta")
@@ -45,15 +51,16 @@ class Portfolio:
             table.add_row(blockchain, address)
         self.console.print(table)
 
+
     def show_assets(self):
         self.assets = [asset for asset in self.assets if asset is not None]
         if not self.assets:
             return
 
-        # console = Console()
-        table = Table(show_header=True, header_style="bold magenta", box=box.SQUARE_DOUBLE_HEAD, title_justify="left")
-        column_titles = list(self.assets[0].__dict__.keys())
-        column_titles.insert(-1, "USD Value")
+        total_value = self.total_value()
+
+        table = Table(show_header=True, show_footer=True, header_style="bold magenta", box=box.SQUARE_DOUBLE_HEAD, title_justify="left")
+        table.title = f"{self.name.capitalize()} Portfolio - Total Value: ${total_value:.2f}"
 
         included_fields = ['symbol', 'balance', 'price', 'value']
         if self.type == "wallet":
@@ -67,15 +74,12 @@ class Portfolio:
                 max_width=item.get("max_width", 20)
             )
 
-        total_value = 0
         for asset in self.assets:
             values = [d["value"] for d in asset.formatted_output(included_fields)]
-            if asset.price is not None:
-                total_value += asset.price * asset.balance
             table.add_row(*values)
 
-        table.title = f"{self.name.capitalize()} Portfolio - Total Value: ${total_value:.2f}"
         self.console.print(table)
+
 
     def export_assets(self):
         utc_now = datetime.now(timezone.utc)
