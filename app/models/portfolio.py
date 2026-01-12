@@ -61,7 +61,7 @@ class Portfolio:
         table = Table(show_header=True, header_style="bold magenta", box=box.SQUARE_DOUBLE_HEAD, title_justify="left")
         table.title = f"{self.name.capitalize()} Portfolio - Total Value: ${total_value:.2f}"
 
-        included_fields = ['symbol', 'balance', 'price', 'value']
+        included_fields = ['name', 'symbol', 'balance', 'price', 'value']
         if self.type == "wallet":
             included_fields.extend(['blockchain', 'address'])
 

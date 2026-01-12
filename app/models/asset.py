@@ -22,6 +22,10 @@ class Asset(Token):
     def table_format(self, included_fields: List[str]=['symbol', 'balance', 'price', 'value']):
         total_value = self.balance * self.price if self.price is not None else 0
         formatted_fields = [{
+            "title": "Name",
+            "justification": "left",
+            "value": self.name,
+        },{
             "title": "Symbol",
             "justification": "left",
             "value": self.symbol,

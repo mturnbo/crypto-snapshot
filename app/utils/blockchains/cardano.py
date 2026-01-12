@@ -13,7 +13,7 @@ def get_ada_price(currency: str = "usd") -> float:
     ada_price = response.json()["value"]["price"]
     return ada_price
 
-def get_wallet_assets(wallet_address: str) -> List[Asset]:
+def get_cardano_assets(wallet_address: str) -> List[Asset]:
     api_url = BASE_API_URL + "wallet"
     params = {
         "address": wallet_address,
@@ -31,7 +31,7 @@ def get_wallet_assets(wallet_address: str) -> List[Asset]:
                 ada_value = float(asset_info.get("price_by_ada", 0))
                 usd_value = ada_value * ada_price
                 asset = Asset(
-                    name=asset_info.get("name", ""),
+                    name=asset_info.get("project_name", ""),
                     symbol=asset_info.get("ticker", ""),
                     blockchain="cardano",
                     address=wallet_address,

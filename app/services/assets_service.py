@@ -4,8 +4,8 @@ from app.models.asset import Asset
 from app.utils.blockchains.bitcoin import get_btc_asset
 from app.utils.blockchains.litecoin import get_ltc_asset
 from app.utils.blockchains.polygon import get_polygon_assets
-from app.utils.blockchains.cardano import get_wallet_assets as get_cardano_assets
-from app.utils.blockchains.erc20 import get_wallet_assets as get_erc20_assets
+from app.utils.blockchains.cardano import get_cardano_assets
+from app.utils.blockchains.erc20 import get_erc20_assets
 from app.utils.blockchains.solana import get_sol_assets
 from app.utils.blockchains.tron import get_tron_asset
 from app.utils.blockchains.xrp import get_xrp_asset
