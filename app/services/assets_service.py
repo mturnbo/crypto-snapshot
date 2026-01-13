@@ -14,7 +14,6 @@ from app.services.api.kraken_api_service import KrakenAPI
 from typing import List, Dict
 
 
-
 class AssetsService():
 
     @staticmethod
