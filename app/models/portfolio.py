@@ -93,10 +93,10 @@ class Portfolio:
             file_path = f"{directory}/{self.type}_{self.name.lower()}_{file_timestamp}.csv"
             with open(file_path, 'w', newline='') as csvfile:
                 writer = csv.writer(csvfile)
-                writer.writerow(['Symbol', 'Balance', 'Price', 'Currency', 'Snapshot Date'])
+                writer.writerow(['Name', 'Symbol', 'Blockchain', 'Balance', 'Price', 'Currency', 'Snapshot Date'])
                 for asset in self.assets:
                     if asset.symbol and asset.balance:
-                        writer.writerow([asset.symbol, asset.balance, asset.price, asset.currency, data_timestamp])
+                        writer.writerow([asset.name, asset.symbol, asset.blockchain, asset.balance, asset.price, asset.currency, data_timestamp])
             self.console.print(f"{self.name} assets exported to {file_path}\n\n", style=style)
         except Exception as e:
             print(f"Error exporting assets: {e}")

@@ -7,6 +7,9 @@ from substrateinterface import SubstrateInterface
 
 load_dotenv()
 
+WSS_API_ENDPOINT = "wss://rpc.polkadot.io/ws"
+# WSS_API_ENDPOINT = "wss://wss.api.moonbase.moonbeam.network"
+
 def get_substrate_balance(wallet_address: str) -> Optional[float]:
     api_key = os.getenv('SUBSCAN_API_KEY')
     api_url = f"https://acala.api.subscan.io/{wallet_address}"
@@ -23,12 +26,12 @@ def get_substrate_balance(wallet_address: str) -> Optional[float]:
         return float(data["xrpBalance"])
 
     except requests.exceptions.RequestException as e:
-        print(f"Error fetching XRP balance: {e}")
+        print(f"Error fetching substrate balance: {e}")
         return None
 
 
 def get_substrate_balance_si(wallet_address: str) -> Optional[float]:
-    substrate = SubstrateInterface(url="wss://rpc.polkadot.io/ws")
+    substrate = SubstrateInterface(url=WSS_API_ENDPOINT)
     account_info = substrate.query(
         module="System",
         storage_function="Account",
@@ -43,12 +46,12 @@ def get_substrate_balance_si(wallet_address: str) -> Optional[float]:
 
 
 def get_substrate_asset(wallet_address: str, get_price: bool = True) -> Asset:
-    balance = get_substrate_balance(wallet_address)
+    balance = get_substrate_balance_si(wallet_address)
 
     asset = Asset(
-        name="XRP",
-        symbol="XRP",
-        blockchain="XRP",
+        name="Polkadot",
+        symbol="DOT",
+        blockchain="Substrate",
         address=wallet_address,
         balance=balance,
         currency="USD",
