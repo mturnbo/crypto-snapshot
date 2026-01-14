@@ -41,7 +41,6 @@ class Portfolio:
 
 
     def show_addresses(self):
-        # console = Console()
         table = Table(show_header=True, header_style="bold magenta")
         table.title = f"{self.name} Portfolio Addresses"
         table.add_column("Blockchain", justify="left", min_width=12)
