@@ -8,3 +8,7 @@ class Token:
         self.description:str = description
         self.logo:str = logo
         self.contracts:List[Dict[str, str]] = contracts
+
+    def __str__(self):
+        return f"Token(\n\tname=: {self.name}\n\tsymbol: {self.symbol}\n\tblockchain: {self.blockchain}\n\tdescription: {self.description}\n\tlogo: {self.logo}\n)"
+

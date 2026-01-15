@@ -18,6 +18,10 @@ class Portfolio:
         self.get_assets()
 
 
+    def __str__(self):
+        return f"Portfolio(\n\tname: {self.name}\n\ttype: {self.type}\n\taddresses: {len(self.addresses)}\n\tassets: {len(self.assets)}\n)"
+
+
     def get_assets(self):
         with self.console.status(f"Retrieving assets for {self.type}: {self.name} ...", spinner="dots"):
             match self.type.lower():
@@ -41,7 +45,6 @@ class Portfolio:
 
 
     def show_addresses(self):
-        # console = Console()
         table = Table(show_header=True, header_style="bold magenta")
         table.title = f"{self.name} Portfolio Addresses"
         table.add_column("Blockchain", justify="left", min_width=12)
