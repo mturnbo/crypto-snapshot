@@ -12,6 +12,3 @@ class Token:
     def __str__(self):
         return f"Token(\n\tname=: {self.name}\n\tsymbol: {self.symbol}\n\tblockchain: {self.blockchain}\n\tdescription: {self.description}\n\tlogo: {self.logo}\n)"
 
-
-t = Token("Bitcoin","BTC","Bitcoin","OG Cryptocurrency")
-print(t)
