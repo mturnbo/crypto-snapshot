@@ -12,6 +12,11 @@ class Asset(Token):
         self.price: float = price
         self.currency: str = currency
 
+
+    def __str__(self):
+        return f"Asset(\n\tname=: {self.name}\n\tsymbol: {self.symbol}\n\tblockchain: {self.blockchain}\n\taddress: {self.address}\n\tbalance: {self.balance}\n\tprice: {self.price}\n\tcurrency: {self.currency}\n)"
+
+
     def get_price(self, currency: str = 'USD'):
         load_dotenv()
         cmc_api_key = os.getenv('COINMARKETCAP_API_KEY')

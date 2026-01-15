@@ -18,6 +18,10 @@ class Portfolio:
         self.get_assets()
 
 
+    def __str__(self):
+        return f"Portfolio(\n\tname: {self.name}\n\ttype: {self.type}\n\taddresses: {len(self.addresses)}\n\tassets: {len(self.assets)}\n)"
+
+
     def get_assets(self):
         with self.console.status(f"Retrieving assets for {self.type}: {self.name} ...", spinner="dots"):
             match self.type.lower():
