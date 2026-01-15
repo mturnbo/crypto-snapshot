@@ -47,7 +47,7 @@ def parse_date(date_input):
         raise TypeError("Date input must be a datetime object or a string.")
 
 
-def show_object_values(obj: Any):
+def show_object_attribute_table(obj: Any):
     console = Console()
 
     table = Table(show_header=True, header_style="bold magenta")
@@ -61,18 +61,3 @@ def show_object_values(obj: Any):
         table.add_row(key, val)
 
     console.print(table)
-
-
-
-class TestObject():
-    def __init__(self, name, type, description):
-        self.name: str = name
-        self.type: str = type
-        self.description: str = description
-
-a = TestObject("TEST", "Type A", "yada yada yada")
-
-show_object(a)
-
-
-
