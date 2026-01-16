@@ -17,7 +17,7 @@ def get_token_info(symbol: str, save_to_file: bool = False):
 
 
 def get_wallets():
-    file_path = os.path.join('config', 'wallets.json')
+    file_path = os.path.join('data', 'wallets.json')
     with open(file_path) as f:
         wallets = json.load(f)
 

@@ -32,10 +32,33 @@ Crypto Snapshot is a Python CLI utility for aggregating cryptocurrency balances 
    export COINBASE_API_SECRET=...
    export KRAKEN_API_KEY=...
    export KRAKEN_API_SECRET=...
-   export COINMARKETCAP_API_KEY=...
    ```
+  
+   
+3. Configure environment variables for token data API's:
 
-3. Add wallets to `config/wallets.json`.
+   ```bash
+   export COINMARKETCAP_API_KEY=...
+   export COINGECKO_API_KEY=...
+   export ETHERSCAN_API_KEY=...
+   ```
+   
+3. Add wallets addresses to `data/wallets.json`.
+   Example:
+   ```json
+   {
+    "atomic": {
+      "BTC": "qwertyuiopasdfghjklzxcvbnm",
+      "ERC20": "qwertyuiopasdfghjklzxcvbnm",
+    },
+     "tangem": {
+       "BTC": "qwertyuiopasdfghjklzxcvbnm",
+       "LTC": "qwertyuiopasdfghjklzxcvbnm",
+       "ERC20": "qwertyuiopasdfghjklzxcvbnm",
+       "ADA": "qwertyuiopasdfghjklzxcvbnm"
+     }
+   }
+   ```
 
 4. Run the CLI:
 
