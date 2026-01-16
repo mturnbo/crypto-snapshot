@@ -60,14 +60,8 @@ class DummyExchangeAPI:
 
 services_stub.CoinbaseAPI = DummyExchangeAPI
 services_stub.KrakenAPI = DummyExchangeAPI
-
-<<<<<<< HEAD
-sys.modules.setdefault("app.services.coinbase_api", services_stub)
-sys.modules.setdefault("app.services.kraken_api", services_stub)
-=======
 sys.modules.setdefault("app.services.coinbase_api_service", services_stub)
 sys.modules.setdefault("app.services.kraken_api_service", services_stub)
->>>>>>> main
 
 import pytest
 
@@ -88,18 +82,6 @@ def test_token_defaults_and_fields():
 
 
 def test_asset_formatted_output_with_price():
-<<<<<<< HEAD
-    asset = Asset(name="Bitcoin", symbol="BTC", address="addr", balance=1.5, price=20000)
-
-    output = asset.formatted_output()
-
-    assert output[0]["value"] == "BTC"
-    assert output[1]["value"] == "addr"
-    assert output[2]["value"] == "1.50000000"
-    assert output[3]["value"] == "20000.00000000"
-    assert output[4]["value"] == "$30,000.00"
-    assert output[5]["value"] == "USD"
-=======
     asset = Asset(name="Bitcoin", symbol="BTC", blockchain="Bitcoin", address="addr", balance=1.5, price=20000)
 
     output = asset.table_format()
@@ -111,20 +93,12 @@ def test_asset_formatted_output_with_price():
     assert output[4]["value"] == "20000.00000000"
     assert output[5]["value"] == "$30,000.00"
     assert output[6]["value"] == "USD"
->>>>>>> main
 
 
 def test_asset_formatted_output_without_price():
     asset = Asset(name="Bitcoin", symbol="BTC", address="addr", balance=1.5, price=None)
-
-<<<<<<< HEAD
-    output = asset.formatted_output()
-
-    assert output[3]["value"] == "N/A"
-=======
     output = asset.table_format()
 
->>>>>>> main
     assert output[4]["value"] == "N/A"
 
 
@@ -164,8 +138,4 @@ def test_portfolio_export_assets_creates_csv(monkeypatch, tmp_path):
         rows = list(reader)
 
     assert rows[0] == ["Symbol", "ID", "Balance", "Price"]
-<<<<<<< HEAD
     assert rows[1] == ["BTC", "", "1.25", "20000"]
-=======
-    assert rows[1] == ["BTC", "", "1.25", "20000"]
->>>>>>> main
