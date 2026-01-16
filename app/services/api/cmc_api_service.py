@@ -32,11 +32,9 @@ class CoinMarketCapAPI():
         return self._session
 
 
-    def make_request(self, endpoint, params):
+    def make_request(self, endpoint: str, params):
         url = self.base_url + endpoint
-
         response_object = self.session.get(url, params=params, timeout=self.request_timeout)
-        print(response_object)
 
         try:
             response = json.loads(response_object.text)
@@ -46,18 +44,48 @@ class CoinMarketCapAPI():
             if isinstance(response, dict) and response_object.status_code == 200:
                 response[u'cached'] = response_object.from_cache
 
+            return response
+
+        except json.decoder.JSONDecodeError as e:
+            print(f"Error fetching from CoinMarketCap: {e}")
+            return response_object.text
+        except requests.exceptions.RequestException as e:
+            print(f"Error fetching from CoinMarketCap: {e}")
         except Exception as e:
+            print(f"Error fetching from CoinMarketCap: {e}")
             return e
 
-        return response
+        return {}
 
 
-    def get_token_info(self, symbol: str = "") -> Dict[str, Any]:
+    def get_token_info(self, symbol: str = "", save_to_file: bool = False) -> Dict[str, Any]:
         params = {
             'symbol': symbol,
         }
 
         response = self.make_request('/cryptocurrency/info', params)
+
+        if response['data'][symbol] is None:
+            return {}
+
+        if save_to_file:
+            try:
+                # Ensure the app/data directory exists
+                data_dir = os.path.join('data')
+                os.makedirs(data_dir, exist_ok=True)
+
+                # Create filename based on symbol
+                filename = os.path.join(data_dir, f'{symbol.lower()}.json')
+
+                # Write the full response to file
+                with open(filename, 'w') as f:
+                    json.dump(response, f, indent=2)
+
+                print(f"Token info for {symbol} saved to {filename}")
+            except Exception as e:
+                print(f"Error saving token info to file: {e}")
+
+
         data = response['data'][symbol][0]
 
         contracts: List[Dict] = []
@@ -75,38 +103,43 @@ class CoinMarketCapAPI():
             'logo': data['logo'],
             'date_launched': data['date_launched'],
             'contracts': contracts,
-            'circulating_supply': float(data['self_reported_circulating_supply']),
+            'circulating_supply': float(data['self_reported_circulating_supply']) if data['self_reported_circulating_supply'] is not None else 0.0,
         }
 
 
-    def get_token_price(self, symbol: str, currency: str = "USD") -> float:
-        params = {
-            'symbol': symbol,
-            'convert': currency,
-        }
-
-        response = self.make_request('/cryptocurrency/quotes/latest', params)
-
-        return response['data'][symbol][0]['quote'][currency]['price']
-
-
-    def get_token_prices(self, symbols: List, currency: str = "USD") -> Dict[str, float]:
-        token_prices: Dict[str, float] = {}
+    def get_token_prices(self, symbols: List[str], currency: str = "USD") -> float | Dict[str, float]:
+        endpoint = '/cryptocurrency/quotes/latest'
         try:
-            symbol_groups = split_list(symbols, 40)
-            for group in symbol_groups:
+            if len(symbols) == 1:
+                symbol = symbols[0]
                 params = {
-                    'symbol': ','.join(group),
+                    'symbol': symbols,
                     'convert': currency,
                 }
 
-                response = self.make_request('/cryptocurrency/quotes/latest', params)
+                response = self.make_request(endpoint, params)
+                return float(response['data'][symbol][0]['quote'][currency]['price'])
+            else:
+                token_prices: Dict[str, float] = {}
+                symbol_groups = split_list(symbols, 40)
+                for group in symbol_groups:
+                    params = {
+                        'symbol': ','.join(group),
+                        'convert': currency,
+                    }
 
-                for symbol in symbols:
-                    if symbol in response['data']:
-                        token_prices[symbol] = float(response['data'][symbol][0]['quote'][currency]['price'])
+                    response = self.make_request('/cryptocurrency/quotes/latest', params)
 
-        except requests.exceptions.RequestException as e:
+                    for symbol in group:
+                        if symbol in response['data'] and len(response['data'][symbol]) > 0:
+                            price = response['data'][symbol][0]['quote'][currency]['price']
+                            token_prices[symbol] = float(price) if price is not None else 0
+
+                        else:
+                            token_prices[symbol] = 0
+
+
+                return token_prices[symbols[0]] if len(token_prices) == 1 else token_prices
+        except Exception as e:
             print(f"Error fetching from CoinMarketCap: {e}")
-
-        return token_prices
+            return 0

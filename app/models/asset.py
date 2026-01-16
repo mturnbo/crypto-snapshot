@@ -1,4 +1,8 @@
 from app.models.token import Token
+import os
+from dotenv import load_dotenv
+from app.services.api.cmc_api_service import CoinMarketCapAPI
+from typing import List
 
 class Asset(Token):
     def __init__(self, name, symbol, blockchain=None, address="", balance=0, price=0, currency="USD"):
@@ -8,11 +12,33 @@ class Asset(Token):
         self.price: float = price
         self.currency: str = currency
 
-    def formatted_output(self):
-        output = [{
+
+    def __str__(self):
+        return f"Asset(\n\tname=: {self.name}\n\tsymbol: {self.symbol}\n\tblockchain: {self.blockchain}\n\taddress: {self.address}\n\tbalance: {self.balance}\n\tprice: {self.price}\n\tcurrency: {self.currency}\n)"
+
+
+    def get_price(self, currency: str = 'USD'):
+        load_dotenv()
+        cmc_api_key = os.getenv('COINMARKETCAP_API_KEY')
+        cmc = CoinMarketCapAPI(api_key=cmc_api_key)
+        usd_value = cmc.get_token_prices([self.symbol], currency)
+        self.price = usd_value
+
+    def table_format(self, included_fields: List[str]=['symbol', 'balance', 'price', 'value']):
+        total_value = self.balance * self.price if self.price is not None else 0
+        formatted_fields = [{
+            "title": "Name",
+            "justification": "left",
+            "value": self.name,
+        },{
             "title": "Symbol",
             "justification": "left",
             "value": self.symbol,
+        }, {
+            "title": "Blockchain",
+            "justification": "left",
+            "value": self.blockchain,
+            "max_width": 10,
         }, {
             "title": "Address",
             "justification": "left",
@@ -21,22 +47,22 @@ class Asset(Token):
         }, {
             "title": "Balance",
             "justification": "right",
-            "value": f"{self.balance:,.8f}",
+            "value": f"{self.balance:,.4f}",
         }, {
             "title": "Price",
             "justification": "right",
             "value": f"{self.price:.8f}" if self.price is not None else "N/A",
-        }]
-        total_value = self.balance * self.price if self.price is not None else None
-        output.append({
+        }, {
             "title": "Value",
             "justification": "right",
             "value": f"${total_value:,.2f}" if total_value is not None else "N/A",
-        })
-        output.append({
+        }, {
             "title": "Currency",
-            "justification": "left",
-            "value": self.currency
-        })
+            "justification": "center",
+            "value": self.currency,
+            "max_width": 8,
+        }]
 
-        return output
+        # return filtered list containing only fields matching included_fields
+        titles_lower = [title.lower() for title in included_fields]
+        return [item for item in formatted_fields if item.get("title").lower() in titles_lower]

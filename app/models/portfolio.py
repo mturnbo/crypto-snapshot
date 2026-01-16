@@ -1,18 +1,10 @@
 import os
-from dotenv import load_dotenv
 from app.models.asset import Asset
 from typing import List, Dict
+from rich import box
 from rich.console import Console
 from rich.table import Table
-from app.utils.blockchains.bitcoin import get_btc_balance
-from app.utils.blockchains.litecoin import get_ltc_balance
-from app.utils.blockchains.polygon import get_polygon_balance
-from app.utils.blockchains.cardano import get_wallet_assets as get_cardano_assets
-from app.utils.blockchains.erc20 import get_wallet_assets as get_erc20_assets
-from app.utils.blockchains.solana import get_wallet_assets as get_solana_assets
-from app.utils.blockchains.tron import get_tron_wallet_info as get_tron_balance
-from app.services.coinbase_api import CoinbaseAPI
-from app.services.kraken_api import KrakenAPI
+from app.services.assets_service import AssetsService
 import csv
 from datetime import datetime, timezone
 
@@ -22,73 +14,61 @@ class Portfolio:
         self.type: str = portfolio_type
         self.addresses: Dict[str, str] = address_list
         self.assets: List[Asset] = []
+        self.console = Console()
         self.get_assets()
 
+
+    def __str__(self):
+        return f"Portfolio(\n\tname: {self.name}\n\ttype: {self.type}\n\taddresses: {len(self.addresses)}\n\tassets: {len(self.assets)}\n)"
+
+
     def get_assets(self):
-        self.assets = []
+        with self.console.status(f"Retrieving assets for {self.type}: {self.name} ...", spinner="dots"):
+            match self.type.lower():
+                case "exchange":
+                    self.assets = AssetsService.get_exchange_assets(self.name)
+                case "wallet":
+                    self.assets = AssetsService.get_wallet_assets(self.addresses)
 
-        match self.type.lower():
-            case "exchange":
-                load_dotenv()
-                match self.name.lower():
-                    case "coinbase":
-                        api_key = os.getenv('COINBASE_API_KEY')
-                        api_secret = os.getenv('COINBASE_API_SECRET')
-                        cb_api = CoinbaseAPI(api_key, api_secret)
-                        self.assets = cb_api.get_portfolio_assets()
-                    case "kraken":
-                        api_key = os.getenv('KRAKEN_API_KEY')
-                        api_secret = os.getenv('KRAKEN_API_SECRET')
-                        kraken_api = KrakenAPI(api_key, api_secret)
-                        self.assets = kraken_api.get_portfolio_assets()
-
-            case "wallet":
-                for blockchain, address in self.addresses.items():
-                    new_assets = []
-                    match blockchain.lower():
-                        case "btc":
-                            new_assets = [get_btc_balance(address)]
-                        case "ltc":
-                            new_assets = [get_ltc_balance(address)]
-                        case "ada":
-                            new_assets = get_cardano_assets(address)
-                        case "erc20":
-                            new_assets = get_erc20_assets(address)
-                        case "sol":
-                            new_assets = get_solana_assets(address)
-                        case "pol":
-                            new_assets = [get_polygon_balance(address)]
-                        case "trx":
-                            new_assets = [get_tron_balance(address)]
-
-                    self.assets.extend(new_assets)
 
     def add_asset(self, asset: Asset):
         self.assets.append(asset)
 
+
     def remove_asset(self, asset_name: str):
         self.assets = [x for x in self.assets if x.name != asset_name]
 
+
+    def total_value(self):
+        total = sum(asset.price * asset.balance for asset in self.assets if asset.price != 0)
+        return total
+
+
     def show_addresses(self):
-        console = Console()
         table = Table(show_header=True, header_style="bold magenta")
         table.title = f"{self.name} Portfolio Addresses"
         table.add_column("Blockchain", justify="left", min_width=12)
         table.add_column("Address", justify="left", min_width=40)
         for blockchain, address in self.addresses.items():
             table.add_row(blockchain, address)
-        console.print(table)
+        self.console.print(table)
+
 
     def show_assets(self):
+        self.assets = [asset for asset in self.assets if asset is not None]
         if not self.assets:
             return
 
-        console = Console()
-        table = Table(show_header=True, header_style="bold magenta")
-        column_titles = list(self.assets[0].__dict__.keys())
-        column_titles.insert(-1, "USD Value")
+        total_value = self.total_value()
 
-        for item in self.assets[0].formatted_output():
+        table = Table(show_header=True, header_style="bold magenta", box=box.SQUARE_DOUBLE_HEAD, title_justify="left")
+        table.title = f"{self.name.capitalize()} Portfolio - Total Value: ${total_value:.2f}"
+
+        included_fields = ['name', 'symbol', 'balance', 'price', 'value']
+        if self.type == "wallet":
+            included_fields.extend(['blockchain', 'address'])
+
+        for item in self.assets[0].table_format(included_fields):
             table.add_column(
                 item["title"],
                 justify=item["justification"],
@@ -96,21 +76,30 @@ class Portfolio:
                 max_width=item.get("max_width", 20)
             )
 
-        total_value = 0
         for asset in self.assets:
-            values = [d["value"] for d in asset.formatted_output()]
-            if asset.price is not None:
-                total_value += asset.price * asset.balance
+            values = [d["value"] for d in asset.table_format(included_fields)]
             table.add_row(*values)
 
-        table.title = f"{self.name.capitalize()} Portfolio - Total Value: ${total_value:.2f}"
-        console.print(table)
+        self.console.print(table)
+
 
     def export_assets(self):
-        utc_timestamp = datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S")
-        file_path = f"export/{self.type}.{self.name.lower()}.{utc_timestamp}.csv"
-        with open(file_path, 'w', newline='') as csvfile:
-            writer = csv.writer(csvfile)
-            writer.writerow(['Symbol', 'ID', 'Balance', 'Price'])
-            for asset in self.assets:
-                writer.writerow([asset.symbol, asset.id, asset.balance, asset.price])
+        utc_now = datetime.now(timezone.utc)
+        file_timestamp = utc_now.strftime("%Y%m%d%H%M%S")
+        data_timestamp = utc_now.strftime("%Y-%m-%d %H:%M:%S")
+        directory = "data/export/" + utc_now.strftime("%Y-%m")
+        style = "bold yellow"
+
+        try:
+            if not os.path.exists(directory):
+                os.makedirs(directory)
+            file_path = f"{directory}/{self.type}_{self.name.lower()}_{file_timestamp}.csv"
+            with open(file_path, 'w', newline='') as csvfile:
+                writer = csv.writer(csvfile)
+                writer.writerow(['Name', 'Symbol', 'Blockchain', 'Balance', 'Price', 'Currency', 'Snapshot Date'])
+                for asset in self.assets:
+                    if asset.symbol and asset.balance:
+                        writer.writerow([asset.name, asset.symbol, asset.blockchain, asset.balance, asset.price, asset.currency, data_timestamp])
+            self.console.print(f"{self.name} assets exported to {file_path}\n\n", style=style)
+        except Exception as e:
+            print(f"Error exporting assets: {e}")

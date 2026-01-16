@@ -3,7 +3,6 @@ import requests
 import os
 import json
 from app.models.asset import Asset
-from app.utils.price_data import get_token_price
 from config.settings import ROOT_DIR
 
 BASE_API_URL = "https://api.mainnet-beta.solana.com"
@@ -40,7 +39,7 @@ def get_sol_balance(wallet_address: str) -> float:
     return balance / 1_000_000_000
 
 
-def get_wallet_assets(wallet_address) -> List[Asset]:
+def get_sol_assets(wallet_address: str, get_price: bool = True) -> List[Asset]:
     payload = {
         "jsonrpc": "2.0",
         "id": 1,
@@ -74,7 +73,9 @@ def get_wallet_assets(wallet_address) -> List[Asset]:
                 balance=balance,
                 currency="USD",
             )
-            asset.price = get_token_price(asset.symbol)
+            
+            if get_price:
+                asset.get_price('USD')
 
             wallet_assets.append(asset)
 

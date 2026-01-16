@@ -1,10 +1,6 @@
-from dotenv import load_dotenv
 import requests
 from app.models.asset import Asset
 from typing import Optional
-from app.utils.price_data import get_token_price
-
-load_dotenv()
 
 def get_tron_balance(wallet_address: str) -> Optional[float]:
     try:
@@ -29,16 +25,19 @@ def get_tron_balance(wallet_address: str) -> Optional[float]:
         return None
 
 
-def get_tron_wallet_info(wallet_address: str) -> Asset:
+def get_tron_asset(wallet_address: str, get_price: bool = True) -> Asset:
     balance = get_tron_balance(wallet_address)
-    usd_value = get_token_price('TRX')
 
-    return Asset(
+    asset = Asset(
         name="TRON",
         symbol="TRX",
         blockchain="tron",
         address=wallet_address,
         balance=balance,
-        price=usd_value,
         currency="USD",
     )
+
+    if get_price:
+        asset.get_price('USD')
+
+    return asset
