@@ -1,5 +1,4 @@
-import os
-from dotenv import load_dotenv
+from app.utils.env import get_env
 from app.models.asset import Asset
 from app.utils.blockchains.bitcoin import get_btc_asset
 from app.utils.blockchains.litecoin import get_ltc_asset
@@ -54,16 +53,15 @@ class AssetsService():
     @staticmethod
     def get_exchange_assets(exchange_name: str) -> List[Asset]:
         assets = []
-        load_dotenv()
         match exchange_name.lower():
             case "coinbase":
-                api_key = os.getenv('COINBASE_API_KEY')
-                api_secret = os.getenv('COINBASE_API_SECRET')
+                api_key = get_env('COINBASE_API_KEY')
+                api_secret = get_env('COINBASE_API_SECRET')
                 cb_api = CoinbaseAPI(api_key, api_secret)
                 assets = cb_api.get_portfolio_assets()
             case "kraken":
-                api_key = os.getenv('KRAKEN_API_KEY')
-                api_secret = os.getenv('KRAKEN_API_SECRET')
+                api_key = get_env('KRAKEN_API_KEY')
+                api_secret = get_env('KRAKEN_API_SECRET')
                 kraken_api = KrakenAPI(api_key, api_secret)
                 assets = kraken_api.get_portfolio_assets()
 

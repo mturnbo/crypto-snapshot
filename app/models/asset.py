@@ -1,6 +1,5 @@
 from app.models.token import Token
-import os
-from dotenv import load_dotenv
+from app.utils.env import get_env
 from app.services.api.cmc_api_service import CoinMarketCapAPI
 from typing import List
 
@@ -18,8 +17,7 @@ class Asset(Token):
 
 
     def get_current_price(self, currency: str = 'USD'):
-        load_dotenv()
-        cmc_api_key = os.getenv('COINMARKETCAP_API_KEY')
+        cmc_api_key = get_env('COINMARKETCAP_API_KEY')
         if cmc_api_key:
             cmc = CoinMarketCapAPI(api_key=cmc_api_key)
             usd_value = cmc.get_token_prices([self.symbol], currency)
