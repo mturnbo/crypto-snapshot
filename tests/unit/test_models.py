@@ -12,6 +12,7 @@ if "rich" not in sys.modules:
     rich_module = types.ModuleType("rich")
     rich_console_module = types.ModuleType("rich.console")
     rich_table_module = types.ModuleType("rich.table")
+    rich_box_module = types.ModuleType("rich.box")
 
     class DummyConsole:
         def print(self, *args, **kwargs):  # pragma: no cover - simple stub
@@ -27,19 +28,31 @@ if "rich" not in sys.modules:
         def add_row(self, *args, **kwargs):  # pragma: no cover - simple stub
             return None
 
+    class DummyBox:
+        def __init__(self, *args, **kwargs):
+            self.style = ""
+
+
     rich_console_module.Console = DummyConsole
     rich_table_module.Table = DummyTable
 
     sys.modules["rich"] = rich_module
     sys.modules["rich.console"] = rich_console_module
     sys.modules["rich.table"] = rich_table_module
+    sys.modules["rich.box"] = rich_box_module
 
 blockchain_stub = types.ModuleType("blockchain_stub")
-blockchain_stub.get_btc_balance = lambda address: None
-blockchain_stub.get_ltc_balance = lambda address: None
-blockchain_stub.get_polygon_balance = lambda address: None
 blockchain_stub.get_wallet_assets = lambda address: []
-blockchain_stub.get_tron_wallet_info = lambda address: None
+blockchain_stub.get_btc_asset = lambda address: None
+blockchain_stub.get_ltc_asset = lambda address: None
+blockchain_stub.get_cardano_assets = lambda address: None
+blockchain_stub.get_erc20_assets = lambda address: None
+blockchain_stub.get_sol_assets = lambda address: None
+blockchain_stub.get_polygon_assets = lambda address: None
+blockchain_stub.get_tron_asset = lambda address: None
+blockchain_stub.get_xrp_asset = lambda address: None
+blockchain_stub.get_substrate_asset = lambda address: None
+blockchain_stub.get_vechain_asset = lambda address: None
 
 sys.modules.setdefault("app.utils.blockchains.bitcoin", blockchain_stub)
 sys.modules.setdefault("app.utils.blockchains.litecoin", blockchain_stub)
@@ -48,6 +61,9 @@ sys.modules.setdefault("app.utils.blockchains.cardano", blockchain_stub)
 sys.modules.setdefault("app.utils.blockchains.erc20", blockchain_stub)
 sys.modules.setdefault("app.utils.blockchains.solana", blockchain_stub)
 sys.modules.setdefault("app.utils.blockchains.tron", blockchain_stub)
+sys.modules.setdefault("app.utils.blockchains.xrp", blockchain_stub)
+sys.modules.setdefault("app.utils.blockchains.substrate", blockchain_stub)
+sys.modules.setdefault("app.utils.blockchains.vechain", blockchain_stub)
 
 services_stub = types.ModuleType("services_stub")
 
@@ -81,25 +97,22 @@ def test_token_defaults_and_fields():
     assert token.contracts == []
 
 
-def test_asset_formatted_output_with_price():
+def test_asset_table_output_with_default_fields():
     asset = Asset(name="Bitcoin", symbol="BTC", blockchain="Bitcoin", address="addr", balance=1.5, price=20000)
 
     output = asset.table_format()
 
     assert output[0]["value"] == "BTC"
-    assert output[1]["value"] == "Bitcoin"
-    assert output[2]["value"] == "addr"
-    assert output[3]["value"] == "1.5000"
-    assert output[4]["value"] == "20000.00000000"
-    assert output[5]["value"] == "$30,000.00"
-    assert output[6]["value"] == "USD"
+    assert output[1]["value"] == "1.5000"
+    assert output[2]["value"] == "20000.00000000"
+    assert output[3]["value"] == "$30,000.00"
 
 
 def test_asset_formatted_output_without_price():
     asset = Asset(name="Bitcoin", symbol="BTC", address="addr", balance=1.5, price=None)
     output = asset.table_format()
 
-    assert output[4]["value"] == "N/A"
+    assert output[2]["value"] == "N/A"
 
 
 def test_portfolio_add_remove_assets(monkeypatch):

@@ -1,7 +1,6 @@
 from datetime import datetime
 import dateutil.parser
 import base64
-from rich import inspect
 from rich.table import Table
 from rich.console import Console
 from typing import List, Any

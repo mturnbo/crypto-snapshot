@@ -83,6 +83,6 @@ def get_substrate_asset(wallet_address: str, get_price: bool = True) -> Asset:
     )
 
     if get_price:
-        asset.get_price('USD')
+        asset.get_current_price('USD')
 
     return asset
