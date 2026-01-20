@@ -16,6 +16,7 @@ class CoinbaseAPI():
         self.api_secret = decode_ec_private_key(api_secret)
         self.rest_client = RESTClient(api_key=self.api_key, api_secret=self.api_secret)
 
+
     def generate_signature(self, timestamp: str, method: str, path: str, body: str = '') -> str:
         # Generate CB-ACCESS-SIGN header for authentication
         message = timestamp + method + path + body

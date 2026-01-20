@@ -1,6 +1,5 @@
 from app.models.token import Token
-import os
-from dotenv import load_dotenv
+from app.utils.env import get_env
 from app.services.api.cmc_api_service import CoinMarketCapAPI
 from typing import List
 
@@ -17,12 +16,13 @@ class Asset(Token):
         return f"Asset(\n\tname=: {self.name}\n\tsymbol: {self.symbol}\n\tblockchain: {self.blockchain}\n\taddress: {self.address}\n\tbalance: {self.balance}\n\tprice: {self.price}\n\tcurrency: {self.currency}\n)"
 
 
-    def get_price(self, currency: str = 'USD'):
-        load_dotenv()
-        cmc_api_key = os.getenv('COINMARKETCAP_API_KEY')
-        cmc = CoinMarketCapAPI(api_key=cmc_api_key)
-        usd_value = cmc.get_token_prices([self.symbol], currency)
-        self.price = usd_value
+    def get_current_price(self, currency: str = 'USD'):
+        cmc_api_key = get_env('COINMARKETCAP_API_KEY')
+        if cmc_api_key:
+            cmc = CoinMarketCapAPI(api_key=cmc_api_key)
+            usd_value = cmc.get_token_prices([self.symbol], currency)
+            self.price = usd_value
+
 
     def table_format(self, included_fields: List[str]=['symbol', 'balance', 'price', 'value']):
         total_value = self.balance * self.price if self.price is not None else 0

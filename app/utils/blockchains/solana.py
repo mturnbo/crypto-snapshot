@@ -75,7 +75,7 @@ def get_sol_assets(wallet_address: str, get_price: bool = True) -> List[Asset]:
             )
             
             if get_price:
-                asset.get_price('USD')
+                asset.get_current_price('USD')
 
             wallet_assets.append(asset)
 
