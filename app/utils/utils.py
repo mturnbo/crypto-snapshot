@@ -1,32 +1,54 @@
+import binascii
 from datetime import datetime
 import dateutil.parser
 import base64
 from rich.table import Table
 from rich.console import Console
 from typing import List, Any
-
+import re
 
 def split_list(lst: List, size: int):
     return [lst[i:i + size] for i in range(0, len(lst), size)]
 
 
 def decode_ec_private_key(encoded_key: str) -> str:
+    if not encoded_key or not isinstance(encoded_key, str):
+        raise ValueError("Private key must be a non-empty string.")
+
+    text = encoded_key.strip()
+
+    # If it's already PEM, normalize line endings and return as-is
+    if text.startswith("-----BEGIN"):
+        pem = text.replace("\r\n", "\n").replace("\r", "\n").strip()
+        return pem + "\n"
+
+    # Otherwise treat as base64-encoded key body
     try:
-        # Decode from base64
-        decoded_key = base64.b64decode(encoded_key).decode('utf-8')
+        decoded_bytes = base64.b64decode(text, validate=True)
+    except (ValueError, binascii.Error) as e:
+        raise ValueError(f"Invalid base64 private key: {e}")
 
-        # Clean up the key - remove extra whitespace and ensure proper PEM format
-        decoded_key = decoded_key.strip()
+    try:
+        decoded_text = decoded_bytes.decode("utf-8").strip()
+    except UnicodeDecodeError as e:
+        raise ValueError(f"Decoded key is not valid UTF-8: {e}")
 
-        # If the key doesn't have PEM headers, add them
-        if not decoded_key.startswith('-----BEGIN'):
-            # Remove any existing newlines and reconstruct proper PEM format
-            key_body = decoded_key.replace('\n', '').replace('\r', '')
-            decoded_key = f"-----BEGIN EC PRIVATE KEY-----\n{key_body}\n-----END EC PRIVATE KEY-----"
+    # If decoded text is PEM, normalize and return
+    if decoded_text.startswith("-----BEGIN"):
+        pem = decoded_text.replace("\r\n", "\n").replace("\r", "\n").strip()
+        return pem + "\n"
 
-        return decoded_key
-    except Exception as e:
-        raise ValueError(f"Failed to decode private key from environment: {e}")
+    # Otherwise, assume it's the raw base64 body; wrap at 64 chars
+    key_body = re.sub(r"\s+", "", decoded_text)
+    if not key_body:
+        raise ValueError("Decoded key body is empty.")
+
+    wrapped = "\n".join(key_body[i:i + 64] for i in range(0, len(key_body), 64))
+    return (
+        "-----BEGIN EC PRIVATE KEY-----\n"
+        f"{wrapped}\n"
+        "-----END EC PRIVATE KEY-----\n"
+    )
 
 
 def parse_date(date_input):
