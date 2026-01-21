@@ -10,6 +10,7 @@ from app.utils.blockchains.tron import get_tron_asset
 from app.utils.blockchains.xrp import get_xrp_asset
 from app.utils.blockchains.substrate import get_substrate_asset
 from app.utils.blockchains.vechain import get_vechain_asset
+from app.utils.blockchains.stellar import get_xlm_asset
 from app.services.api.coinbase_api_service import CoinbaseAPI
 from app.services.api.kraken_api_service import KrakenAPI
 from typing import List, Dict
@@ -44,6 +45,8 @@ class AssetsService():
                     new_assets = [get_substrate_asset(address)]
                 case "vet":
                     new_assets = [get_vechain_asset(address)]
+                case "xlm":
+                    new_assets = [get_xlm_asset(address)]
 
             assets.extend(new_assets)
 
