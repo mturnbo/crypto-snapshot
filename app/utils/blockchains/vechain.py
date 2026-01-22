@@ -1,13 +1,10 @@
-import os
 import requests
 from app.models.asset import Asset
 from typing import Optional
-from dotenv import load_dotenv
-
-load_dotenv()
+from app.utils.env import get_env
 
 API_BASE_URL = "https://api.vechainstats.com/v2/"
-API_KEY = os.environ.get('VECHAINSTATS_API_KEY')
+API_KEY = get_env('VECHAINSTATS_API_KEY')
 
 def get_vechain_balance(wallet_address: str) -> Optional[float]:
     try:

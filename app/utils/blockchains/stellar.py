@@ -12,7 +12,7 @@ def get_xlm_balance(wallet_address: str) -> Optional[float]:
 
         return balance
     else:
-        return None
+        return 0.0
 
 
 def get_xlm_asset(wallet_address: str, get_price: bool = True) -> Asset:

@@ -1,19 +1,16 @@
-import os
 import requests
 from app.models.asset import Asset
 from typing import Optional
-from dotenv import load_dotenv
+from app.utils.env import get_env
 from substrateinterface import SubstrateInterface
 from substrateinterface.exceptions import SubstrateRequestException
 import json
-
-load_dotenv()
 
 WSS_API_ENDPOINT = "wss://rpc.polkadot.io"
 DOT_DECIMALS = 10
 
 def get_substrate_balance(wallet_address: str) -> Optional[float]:
-    api_key = os.getenv('SUBSCAN_API_KEY')
+    api_key = get_env('SUBSCAN_API_KEY')
     api_url = f"https://acala.api.subscan.io/api/scan/assets/account/balances"
     headers = {
         'x-api-key': api_key,

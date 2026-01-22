@@ -18,7 +18,7 @@ def get_erc20_assets(wallet_address: str) -> List[Asset]:
             symbol="ETH",
             blockchain="erc20",
             address=wallet_address,
-            balance=asset_info.get("balance", "0"),
+            balance=asset_info.get("balance", 0),
             price=asset_info["price"]["rate"],
             currency="USD",
         )

@@ -22,7 +22,7 @@ def get_tron_balance(wallet_address: str) -> Optional[float]:
 
     except requests.exceptions.RequestException as e:
         print(f"Error fetching TRON balance: {e}")
-        return None
+        return 0.0
 
 
 def get_tron_asset(wallet_address: str, get_price: bool = True) -> Asset:

@@ -40,7 +40,7 @@ class Portfolio:
 
 
     def total_value(self):
-        total = sum(asset.price * asset.balance for asset in self.assets if asset.price != 0)
+        total = sum(asset.price * asset.balance for asset in self.assets if asset.price and asset.balance)
         return total
 
 
