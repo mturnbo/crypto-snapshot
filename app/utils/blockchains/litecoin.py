@@ -1,7 +1,7 @@
 import requests
 from app.models.asset import Asset
 
-def get_ltc_balance(address: str) -> float | None:
+def get_ltc_balance(address: str) -> float:
     try:
         # BlockCypher API
         url = f"https://api.blockcypher.com/v1/ltc/main/addrs/{address}/balance"
@@ -15,10 +15,10 @@ def get_ltc_balance(address: str) -> float | None:
 
     except requests.exceptions.RequestException as e:
         print(f"Error fetching data: {e}")
-        return None
     except Exception as e:
         print(f"Unexpected error: {e}")
-        return None
+
+    return 0.0
 
 
 def get_ltc_asset(wallet_address: str, get_price: bool = True) -> Asset:

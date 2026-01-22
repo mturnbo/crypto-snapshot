@@ -9,7 +9,7 @@ import json
 WSS_API_ENDPOINT = "wss://rpc.polkadot.io"
 DOT_DECIMALS = 10
 
-def get_substrate_balance(wallet_address: str) -> Optional[float]:
+def get_substrate_balance(wallet_address: str) -> float:
     api_key = get_env('SUBSCAN_API_KEY')
     api_url = f"https://acala.api.subscan.io/api/scan/assets/account/balances"
     headers = {
@@ -32,9 +32,9 @@ def get_substrate_balance(wallet_address: str) -> Optional[float]:
                 balance_dot = balance_raw / (10 ** DOT_DECIMALS)
                 return balance_dot
             else:
-                print("Balance data not found in the response.")
+                print("Substrate balance data not found in the response.")
         else:
-            print(f"API Error: {data.get('message', 'Unknown error')}")
+            print(f"Subscan API Error: {data.get('message', 'Unknown error')}")
 
 
     except requests.exceptions.RequestException as e:
@@ -44,7 +44,7 @@ def get_substrate_balance(wallet_address: str) -> Optional[float]:
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
 
-    return None
+    return 0.0
 
 
 def get_substrate_balance_si(wallet_address: str) -> Optional[float]:

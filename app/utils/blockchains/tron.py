@@ -1,8 +1,7 @@
 import requests
 from app.models.asset import Asset
-from typing import Optional
 
-def get_tron_balance(wallet_address: str) -> Optional[float]:
+def get_tron_balance(wallet_address: str) -> float:
     try:
         url = f"https://api.trongrid.io/v1/accounts/{wallet_address}"
         headers = {"Accept": "application/json"}
