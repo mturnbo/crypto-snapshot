@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 API_BASE_URL = "https://api.vechainstats.com/v2/"
-API_KEY = os.environ.get('VECHAINSTATS_API')
+API_KEY = os.environ.get('VECHAINSTATS_API_KEY')
 
 def get_vechain_balance(wallet_address: str) -> Optional[float]:
     try:

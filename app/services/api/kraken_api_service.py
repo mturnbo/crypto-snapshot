@@ -1,8 +1,7 @@
 from kraken.spot import User
 from app.models.asset import Asset
 from app.services.api.cmc_api_service import CoinMarketCapAPI
-import os
-from dotenv import load_dotenv
+from app.utils.env import get_env
 from typing import Dict, List
 
 
@@ -23,8 +22,7 @@ class KrakenAPI:
 
 
     def get_prices(self, symbols: List[str]) -> Dict[str, float]:
-        load_dotenv()
-        cmc_api_key = os.getenv('COINMARKETCAP_API_KEY')
+        cmc_api_key = get_env('COINMARKETCAP_API_KEY')
         cmc = CoinMarketCapAPI(api_key=cmc_api_key)
 
         return cmc.get_token_prices(symbols=symbols, currency='USD')
