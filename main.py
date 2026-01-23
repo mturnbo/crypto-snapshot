@@ -3,13 +3,11 @@ import json
 from app.models.portfolio import Portfolio
 import argparse
 from typing import List
-from app.utils.env import load_env
+from app.utils.env import get_env
 from app.services.api.cmc_api_service import CoinMarketCapAPI
 
-load_env()
-
 def get_token_info(symbol: str, save_to_file: bool = False):
-    api_key = os.getenv('COINMARKETCAP_API_KEY')
+    api_key = get_env('COINMARKETCAP_API_KEY')
     cmc = CoinMarketCapAPI(api_key=api_key)
     info = cmc.get_token_info(symbol=symbol, save_to_file=save_to_file)
 
