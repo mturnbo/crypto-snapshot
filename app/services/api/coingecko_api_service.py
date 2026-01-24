@@ -1,6 +1,5 @@
-from app.models.asset import Asset
 import requests
-from typing import Dict, List
+from typing import Dict
 
 
 class CoinGeckoAPI():

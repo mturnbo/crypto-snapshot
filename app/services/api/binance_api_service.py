@@ -1,6 +1,6 @@
 import os
 import requests_cache
-from typing import Dict, List, Any
+from typing import Dict
 import tempfile
 import json
 import urllib.parse
