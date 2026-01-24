@@ -27,29 +27,29 @@ class AssetsService():
             new_assets = []
             match blockchain.lower():
                 case "btc":
-                    new_assets = [get_btc_asset(address)]
+                    new_assets = [get_btc_asset(address, False)]
                 case "ltc":
-                    new_assets = [get_ltc_asset(address)]
+                    new_assets = [get_ltc_asset(address, False)]
                 case "ada":
                     new_assets = get_cardano_assets(address)
                 case "erc20":
                     new_assets = get_erc20_assets(address)
                 case "sol":
-                    new_assets = get_sol_assets(address)
+                    new_assets = get_sol_assets(address, False)
                 case "pol":
-                    new_assets = [get_polygon_assets(address)]
+                    new_assets = [get_polygon_assets(address, False)]
                 case "trx":
-                    new_assets = [get_tron_asset(address)]
+                    new_assets = [get_tron_asset(address, False)]
                 case "xrp":
-                    new_assets = [get_xrp_asset(address)]
+                    new_assets = [get_xrp_asset(address, False)]
                 case "dot":
-                    new_assets = [get_substrate_asset(address)]
+                    new_assets = [get_substrate_asset(address, False)]
                 case "vet":
-                    new_assets = [get_vechain_asset(address)]
+                    new_assets = [get_vechain_asset(address, False)]
                 case "xlm":
-                    new_assets = [get_xlm_asset(address)]
+                    new_assets = [get_xlm_asset(address, False)]
                 case "doge":
-                    new_assets = [get_doge_asset(address)]
+                    new_assets = [get_doge_asset(address, False)]
 
             assets.extend(new_assets)
 

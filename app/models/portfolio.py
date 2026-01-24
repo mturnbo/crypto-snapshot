@@ -7,6 +7,9 @@ from rich.table import Table
 from app.services.assets_service import AssetsService
 import csv
 from datetime import datetime, timezone
+from app.services.api.cmc_api_service import CoinMarketCapAPI
+from app.utils.env import get_env
+
 
 class Portfolio:
     def __init__(self, name: str="", portfolio_type: str="", address_list: Dict[str, str]={}):
@@ -15,20 +18,31 @@ class Portfolio:
         self.addresses: Dict[str, str] = address_list
         self.assets: List[Asset] = []
         self.console = Console()
-        self.get_assets()
+        self.get_assets(True)
 
 
     def __str__(self):
         return f"Portfolio(\n\tname: {self.name}\n\ttype: {self.type}\n\taddresses: {len(self.addresses)}\n\tassets: {len(self.assets)}\n)"
 
 
-    def get_assets(self):
+    def get_assets(self, update_prices: bool = False):
         with self.console.status(f"Retrieving assets for {self.type}: {self.name} ...", spinner="dots"):
             match self.type.lower():
                 case "exchange":
                     self.assets = AssetsService.get_exchange_assets(self.name)
                 case "wallet":
                     self.assets = AssetsService.get_wallet_assets(self.addresses)
+        if update_prices:
+            self.update_asset_prices()
+
+
+    def update_asset_prices(self):
+        cmc_api_key = get_env('COINMARKETCAP_API_KEY')
+        cmc = CoinMarketCapAPI(api_key=cmc_api_key)
+        symbols = [asset.symbol for asset in self.assets]
+        prices = cmc.get_token_prices(symbols=symbols, currency='USD')
+        for asset in self.assets:
+            asset.price = prices.get(asset.symbol, asset.price)
 
 
     def add_asset(self, asset: Asset):
