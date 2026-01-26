@@ -1,4 +1,4 @@
-from typing import List, Dict, Any
+from typing import List, Dict
 
 class Token:
     def __init__(self, name: str = "", symbol: str = "", blockchain: str = "", description: str = "", logo: str = "", contracts: List[Dict[str, str]] = []):

@@ -1,8 +1,6 @@
 import requests
 from app.models.asset import Asset
-from typing import Optional
 from app.utils.env import get_env
-import json
 
 DOT_DECIMALS = 10
 

@@ -22,7 +22,7 @@ def get_vechain_balance(wallet_address: str) -> Optional[float]:
         response.raise_for_status()
         data = response.json()
 
-        return float(data["data"]["vet"]) if data["status"]["success"] == True else 0
+        return float(data["data"]["vet"]) if data["status"]["success"] else 0
 
     except requests.exceptions.RequestException as e:
         print(f"Error fetching VECHAIN balance: {e}")
