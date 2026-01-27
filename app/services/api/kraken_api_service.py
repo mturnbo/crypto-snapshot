@@ -34,8 +34,6 @@ class KrakenAPI:
 
     def get_portfolio_assets(self) -> List[Asset]:
         portfolio_data = self.get_portfolio_data()
-        print(portfolio_data)
-
         assets = []
         for asset, balance in portfolio_data.items():
             if float(balance) > 0:

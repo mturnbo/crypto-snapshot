@@ -5,6 +5,7 @@ from app.utils.utils import split_list
 import tempfile
 import requests_cache
 import json
+import re
 
 class CoinMarketCapAPI():
     DEFAULT_TIMEOUT = 60
@@ -119,40 +120,30 @@ class CoinMarketCapAPI():
         return float(response['data'][symbol][0]['quote'][currency]['price'])
 
 
-    def get_token_prices(self, symbols: List[str], currency: str = "USD") -> float | Dict[str, float]:
+    def get_token_prices(self, symbols: List[str], currency: str = "USD") -> Dict[str, float]:
         endpoint = '/cryptocurrency/quotes/latest'
 
         try:
-            if len(symbols) == 1:
-                symbol = symbols[0]
+            # filter symbols
+            clean_symbol_list = [re.sub(r'[^a-zA-Z0-9]', '', item) for item in symbols]
+
+            token_prices: Dict[str, float] = {}
+            symbol_groups = split_list(clean_symbol_list, 40)
+            for group in symbol_groups:
                 params = {
-                    'symbol': symbols,
+                    'symbol': ','.join(group),
                     'convert': currency,
                 }
 
                 response = self.make_request(endpoint, params)
-                return float(response['data'][symbol][0]['quote'][currency]['price'])
-            else:
-                # filter symbols
-                symbols = [symbol for symbol in symbols if '.' not in symbol]
-                token_prices: Dict[str, float] = {}
-                symbol_groups = split_list(symbols, 40)
-                for group in symbol_groups:
-                    print(f"Getting prices for {len(group)} tokens: {group}")
-                    params = {
-                        'symbol': ','.join(group),
-                        'convert': currency,
-                    }
 
-                    response = self.make_request('/cryptocurrency/quotes/latest', params)
-
-                    for symbol in group:
-                        if symbol in response['data'] and len(response['data'][symbol]) > 0:
-                            price = response['data'][symbol][0]['quote'][currency]['price']
-                            token_prices[symbol] = float(price) if price is not None else 0
+                for symbol in group:
+                    if symbol in response['data'] and len(response['data'][symbol]) > 0:
+                        price = response['data'][symbol][0]['quote'][currency]['price']
+                        token_prices[symbol] = float(price) if price is not None else 0
 
 
-                return token_prices[symbols[0]] if len(token_prices) == 1 else token_prices
+            return token_prices[symbols[0]] if len(token_prices) == 1 else token_prices
         except Exception as e:
             print(f"Error fetching from CoinMarketCap: {e}")
             return 0

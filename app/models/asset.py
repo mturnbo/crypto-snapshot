@@ -20,7 +20,7 @@ class Asset(Token):
         cmc_api_key = get_env('COINMARKETCAP_API_KEY')
         if cmc_api_key:
             cmc = CoinMarketCapAPI(api_key=cmc_api_key)
-            usd_value = cmc.get_token_prices([self.symbol], currency)
+            usd_value = cmc.get_token_price(self.symbol, currency)
             self.price = usd_value
 
 
