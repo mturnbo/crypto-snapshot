@@ -51,6 +51,7 @@ class CoinMarketCapAPI():
             return response_object.text
         except requests.exceptions.RequestException as e:
             print(f"Error fetching from CoinMarketCap: {e}")
+            print(response_object.text)
         except Exception as e:
             print(f"Error fetching from CoinMarketCap: {e}")
             return e
@@ -107,8 +108,20 @@ class CoinMarketCapAPI():
         }
 
 
+    def get_token_price(self, symbol: str, currency: str = "USD") -> float:
+        endpoint = '/cryptocurrency/quotes/latest'
+        params = {
+            'symbol': symbol,
+            'convert': currency,
+        }
+
+        response = self.make_request(endpoint, params)
+        return float(response['data'][symbol][0]['quote'][currency]['price'])
+
+
     def get_token_prices(self, symbols: List[str], currency: str = "USD") -> float | Dict[str, float]:
         endpoint = '/cryptocurrency/quotes/latest'
+
         try:
             if len(symbols) == 1:
                 symbol = symbols[0]
@@ -120,9 +133,12 @@ class CoinMarketCapAPI():
                 response = self.make_request(endpoint, params)
                 return float(response['data'][symbol][0]['quote'][currency]['price'])
             else:
+                # filter symbols
+                symbols = [symbol for symbol in symbols if '.' not in symbol]
                 token_prices: Dict[str, float] = {}
                 symbol_groups = split_list(symbols, 40)
                 for group in symbol_groups:
+                    print(f"Getting prices for {len(group)} tokens: {group}")
                     params = {
                         'symbol': ','.join(group),
                         'convert': currency,
@@ -140,3 +156,4 @@ class CoinMarketCapAPI():
         except Exception as e:
             print(f"Error fetching from CoinMarketCap: {e}")
             return 0
+
