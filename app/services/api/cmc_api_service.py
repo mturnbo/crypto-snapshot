@@ -5,6 +5,7 @@ from app.utils.utils import split_list
 import tempfile
 import requests_cache
 import json
+import re
 
 class CoinMarketCapAPI():
     DEFAULT_TIMEOUT = 60
@@ -51,6 +52,7 @@ class CoinMarketCapAPI():
             return response_object.text
         except requests.exceptions.RequestException as e:
             print(f"Error fetching from CoinMarketCap: {e}")
+            print(response_object.text)
         except Exception as e:
             print(f"Error fetching from CoinMarketCap: {e}")
             return e
@@ -107,36 +109,42 @@ class CoinMarketCapAPI():
         }
 
 
-    def get_token_prices(self, symbols: List[str], currency: str = "USD") -> float | Dict[str, float]:
+    def get_token_price(self, symbol: str, currency: str = "USD") -> float:
         endpoint = '/cryptocurrency/quotes/latest'
+        params = {
+            'symbol': symbol,
+            'convert': currency,
+        }
+
+        response = self.make_request(endpoint, params)
+        return float(response['data'][symbol][0]['quote'][currency]['price'])
+
+
+    def get_token_prices(self, symbols: List[str], currency: str = "USD") -> Dict[str, float]:
+        endpoint = '/cryptocurrency/quotes/latest'
+
         try:
-            if len(symbols) == 1:
-                symbol = symbols[0]
+            # filter symbols
+            clean_symbol_list = [re.sub(r'[^a-zA-Z0-9]', '', item) for item in symbols]
+
+            token_prices: Dict[str, float] = {}
+            symbol_groups = split_list(clean_symbol_list, 40)
+            for group in symbol_groups:
                 params = {
-                    'symbol': symbols,
+                    'symbol': ','.join(group),
                     'convert': currency,
                 }
 
                 response = self.make_request(endpoint, params)
-                return float(response['data'][symbol][0]['quote'][currency]['price'])
-            else:
-                token_prices: Dict[str, float] = {}
-                symbol_groups = split_list(symbols, 40)
-                for group in symbol_groups:
-                    params = {
-                        'symbol': ','.join(group),
-                        'convert': currency,
-                    }
 
-                    response = self.make_request('/cryptocurrency/quotes/latest', params)
-
-                    for symbol in group:
-                        if symbol in response['data'] and len(response['data'][symbol]) > 0:
-                            price = response['data'][symbol][0]['quote'][currency]['price']
-                            token_prices[symbol] = float(price) if price is not None else 0
+                for symbol in group:
+                    if symbol in response['data'] and len(response['data'][symbol]) > 0:
+                        price = response['data'][symbol][0]['quote'][currency]['price']
+                        token_prices[symbol] = float(price) if price is not None else 0
 
 
-                return token_prices[symbols[0]] if len(token_prices) == 1 else token_prices
+            return token_prices[symbols[0]] if len(token_prices) == 1 else token_prices
         except Exception as e:
             print(f"Error fetching from CoinMarketCap: {e}")
             return 0
+
