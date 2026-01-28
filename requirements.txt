@@ -356,6 +356,7 @@ Rtree @ file:///Users/builder/cbouss/perseverance-python-buildout/croot/rtree_16
 ruamel-yaml-conda @ file:///Users/builder/cbouss/perseverance-python-buildout/croot/ruamel_yaml_1699249814223/work
 ruamel.yaml @ file:///private/var/folders/nz/j6p8yfhx1mv_0grj5xl4650h0000gp/T/abs_35yvtl3p84/croot/ruamel.yaml_1727980165481/work
 ruamel.yaml.clib @ file:///private/var/folders/nz/j6p8yfhx1mv_0grj5xl4650h0000gp/T/abs_70l_orv46q/croot/ruamel.yaml.clib_1727769819918/work
+ruff==0.14.14
 s3fs @ file:///private/var/folders/k1/30mswbxs7r1g6zwn8y4fyt500000gp/T/abs_fa25uuxfjq/croot/s3fs_1724924107705/work
 scalecodec==1.2.12
 scikit-image @ file:///private/var/folders/k1/30mswbxs7r1g6zwn8y4fyt500000gp/T/abs_d6j00jzmsp/croot/scikit-image_1726737419383/work
