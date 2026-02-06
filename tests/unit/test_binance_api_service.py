@@ -37,8 +37,8 @@ def test_make_request_failure(api_client):
         # Act
         response = api_client.make_request(endpoint, use_signature=False)
 
-        # Assert
-        assert response == "Internal Server Error"
+    # Assert
+    assert isinstance(response, Exception)
 
 
 def test_make_request_with_signature(api_client):

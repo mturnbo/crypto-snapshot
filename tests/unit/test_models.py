@@ -1,92 +1,8 @@
 import csv
-from pathlib import Path
-import sys
-import types
-
-ROOT_DIR = Path(__file__).resolve().parents[1]
-sys.path.append(str(ROOT_DIR))
-
-sys.modules.setdefault("dotenv", types.SimpleNamespace(load_dotenv=lambda: None))
-
-if "rich" not in sys.modules:
-    rich_module = types.ModuleType("rich")
-    rich_console_module = types.ModuleType("rich.console")
-    rich_table_module = types.ModuleType("rich.table")
-    rich_box_module = types.ModuleType("rich.box")
-
-    class DummyConsole:
-        def print(self, *args, **kwargs):  # pragma: no cover - simple stub
-            return None
-
-    class DummyTable:
-        def __init__(self, *args, **kwargs):
-            self.title = ""
-
-        def add_column(self, *args, **kwargs):  # pragma: no cover - simple stub
-            return None
-
-        def add_row(self, *args, **kwargs):  # pragma: no cover - simple stub
-            return None
-
-    class DummyBox:
-        def __init__(self, *args, **kwargs):
-            self.style = ""
 
 
-    rich_console_module.Console = DummyConsole
-    rich_table_module.Table = DummyTable
-
-    sys.modules["rich"] = rich_module
-    sys.modules["rich.console"] = rich_console_module
-    sys.modules["rich.table"] = rich_table_module
-    sys.modules["rich.box"] = rich_box_module
-
-blockchain_stub = types.ModuleType("blockchain_stub")
-blockchain_stub.get_wallet_assets = lambda address: []
-blockchain_stub.get_btc_asset = lambda address: None
-blockchain_stub.get_ltc_asset = lambda address: None
-blockchain_stub.get_cardano_assets = lambda address: None
-blockchain_stub.get_erc20_assets = lambda address: None
-blockchain_stub.get_sol_assets = lambda address: None
-blockchain_stub.get_polygon_assets = lambda address: None
-blockchain_stub.get_tron_asset = lambda address: None
-blockchain_stub.get_xrp_asset = lambda address: None
-blockchain_stub.get_substrate_asset = lambda address: None
-blockchain_stub.get_vechain_asset = lambda address: None
-
-sys.modules.setdefault("app.utils.blockchains.bitcoin", blockchain_stub)
-sys.modules.setdefault("app.utils.blockchains.litecoin", blockchain_stub)
-sys.modules.setdefault("app.utils.blockchains.polygon", blockchain_stub)
-sys.modules.setdefault("app.utils.blockchains.cardano", blockchain_stub)
-sys.modules.setdefault("app.utils.blockchains.erc20", blockchain_stub)
-sys.modules.setdefault("app.utils.blockchains.solana", blockchain_stub)
-sys.modules.setdefault("app.utils.blockchains.tron", blockchain_stub)
-sys.modules.setdefault("app.utils.blockchains.xrp", blockchain_stub)
-sys.modules.setdefault("app.utils.blockchains.substrate", blockchain_stub)
-sys.modules.setdefault("app.utils.blockchains.vechain", blockchain_stub)
-
-services_stub = types.ModuleType("services_stub")
-
-class DummyExchangeAPI:
-    def __init__(self, *args, **kwargs):
-        pass
-
-    def get_portfolio_assets(self):
-        return []
-
-services_stub.CoinbaseAPI = DummyExchangeAPI
-services_stub.KrakenAPI = DummyExchangeAPI
-sys.modules.setdefault("app.services.coinbase_api_service", services_stub)
-sys.modules.setdefault("app.services.kraken_api_service", services_stub)
-
-import pytest
-
-from app.models.asset import Asset
-from app.models.portfolio import Portfolio
-from app.models.token import Token
-
-
-def test_token_defaults_and_fields():
+def test_token_defaults_and_fields(models_with_stubs):
+    _, _, Token = models_with_stubs
     token = Token()
 
     assert token.name == ""
@@ -97,7 +13,8 @@ def test_token_defaults_and_fields():
     assert token.contracts == []
 
 
-def test_asset_table_output_with_default_fields():
+def test_asset_table_output_with_default_fields(models_with_stubs):
+    Asset, _, _ = models_with_stubs
     asset = Asset(name="Bitcoin", symbol="BTC", blockchain="Bitcoin", address="addr", balance=1.5, price=20000)
 
     output = asset.table_format()
@@ -108,15 +25,17 @@ def test_asset_table_output_with_default_fields():
     assert output[3]["value"] == "$30,000.00"
 
 
-def test_asset_formatted_output_without_price():
+def test_asset_formatted_output_without_price(models_with_stubs):
+    Asset, _, _ = models_with_stubs
     asset = Asset(name="Bitcoin", symbol="BTC", address="addr", balance=1.5, price=None)
     output = asset.table_format()
 
     assert output[2]["value"] == "N/A"
 
 
-def test_portfolio_add_remove_assets(monkeypatch):
-    monkeypatch.setattr(Portfolio, "get_assets", lambda self: None)
+def test_portfolio_add_remove_assets(monkeypatch, models_with_stubs):
+    Asset, Portfolio, _ = models_with_stubs
+    monkeypatch.setattr(Portfolio, "get_assets", lambda *args, **kwargs: None)
     portfolio = Portfolio(name="Test", portfolio_type="wallet")
 
     asset = Asset(name="Bitcoin", symbol="BTC", balance=1)
@@ -129,26 +48,26 @@ def test_portfolio_add_remove_assets(monkeypatch):
     assert portfolio.assets == []
 
 
-def test_portfolio_export_assets_creates_csv(monkeypatch, tmp_path):
-    monkeypatch.setattr(Portfolio, "get_assets", lambda self: None)
+def test_portfolio_export_assets_creates_csv(monkeypatch, tmp_path, models_with_stubs):
+    Asset, Portfolio, _ = models_with_stubs
+    monkeypatch.setattr(Portfolio, "get_assets", lambda *args, **kwargs: None)
     monkeypatch.chdir(tmp_path)
 
-    export_dir = tmp_path / "export"
-    export_dir.mkdir()
-
     portfolio = Portfolio(name="Test", portfolio_type="wallet")
-    asset = Asset(name="Bitcoin", symbol="BTC", balance=1.25, price=20000)
+    asset = Asset(name="Bitcoin", symbol="BTC", blockchain="bitcoin", balance=1.25, price=20000)
     asset.id = ""
     portfolio.assets = [asset]
 
     portfolio.export_assets()
 
-    exported_files = list(export_dir.glob("wallet.test.*.csv"))
+    export_root = tmp_path / "data" / "export"
+    exported_files = list(export_root.rglob("wallet_test_*.csv"))
     assert len(exported_files) == 1
 
     with exported_files[0].open(newline="") as csvfile:
         reader = csv.reader(csvfile)
         rows = list(reader)
 
-    assert rows[0] == ["Symbol", "ID", "Balance", "Price"]
-    assert rows[1] == ["BTC", "", "1.25", "20000"]
+    assert rows[0] == ["Name", "Symbol", "Blockchain", "Balance", "Price", "Currency", "Snapshot Date"]
+    assert rows[1][:6] == ["Bitcoin", "BTC", "bitcoin", "1.25", "20000", "USD"]
+    assert rows[1][6]

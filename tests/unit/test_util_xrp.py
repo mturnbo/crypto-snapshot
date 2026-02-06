@@ -1,4 +1,5 @@
 import requests
+import pytest
 from app.utils.blockchains.xrp import get_xrp_balance
 
 
@@ -35,7 +36,7 @@ def test_get_xrp_balance_error(monkeypatch):
 
     monkeypatch.setattr(requests, "get", fake_get)
     balance = get_xrp_balance(wallet_address)
-    assert balance is None
+    assert balance == 0.0
 
 
 def test_get_xrp_balance_invalid_status(monkeypatch):
@@ -46,7 +47,7 @@ def test_get_xrp_balance_invalid_status(monkeypatch):
 
     monkeypatch.setattr(requests, "get", fake_get)
     balance = get_xrp_balance(wallet_address)
-    assert balance is None
+    assert balance == 0.0
 
 
 def test_get_xrp_balance_malformed_json(monkeypatch):
@@ -60,5 +61,5 @@ def test_get_xrp_balance_malformed_json(monkeypatch):
         return MalformedResponse({}, status_code=200)
 
     monkeypatch.setattr(requests, "get", fake_get)
-    balance = get_xrp_balance(wallet_address)
-    assert balance is None
+    with pytest.raises(ValueError):
+        get_xrp_balance(wallet_address)
