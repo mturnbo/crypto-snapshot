@@ -59,7 +59,7 @@ def test_get_tron_balance_http_error(monkeypatch):
 
     monkeypatch.setattr(requests, "get", fake_get)
     balance = get_tron_balance(wallet_address)
-    assert balance is None
+    assert balance == 0.0
 
 
 def test_get_tron_balance_request_exception(monkeypatch):
@@ -70,4 +70,4 @@ def test_get_tron_balance_request_exception(monkeypatch):
 
     monkeypatch.setattr(requests, "get", fake_get)
     balance = get_tron_balance(wallet_address)
-    assert balance is None
+    assert balance == 0.0

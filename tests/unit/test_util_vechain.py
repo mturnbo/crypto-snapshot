@@ -1,4 +1,5 @@
 from unittest.mock import patch, Mock
+import requests
 
 import pytest
 from app.utils.blockchains.vechain import get_vechain_balance
@@ -29,7 +30,7 @@ def mock_response_failure():
 @pytest.fixture
 def mock_response_error():
     mock = Mock()
-    mock.raise_for_status.side_effect = Exception("Request failed")
+    mock.raise_for_status.side_effect = requests.exceptions.RequestException("Request failed")
     return mock
 
 

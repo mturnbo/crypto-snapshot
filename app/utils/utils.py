@@ -79,6 +79,6 @@ def show_object_attribute_table(obj: Any):
     table.add_column("Value", justify="left", min_width=40)
 
     for key, val in obj.__dict__.items():
-        table.add_row(key, val)
+        table.add_row(key, str(val))
 
     console.print(table)

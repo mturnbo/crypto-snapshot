@@ -35,7 +35,7 @@ def test_get_ltc_balance_invalid_address(monkeypatch):
 
     monkeypatch.setattr(requests, "get", fake_get)
     balance = get_ltc_balance(address)
-    assert balance is None
+    assert balance == 0.0
 
 
 def test_get_ltc_balance_connection_error(monkeypatch):
@@ -46,7 +46,7 @@ def test_get_ltc_balance_connection_error(monkeypatch):
 
     monkeypatch.setattr(requests, "get", fake_get)
     balance = get_ltc_balance(address)
-    assert balance is None
+    assert balance == 0.0
 
 
 def test_get_ltc_balance_unexpected_error(monkeypatch):
@@ -57,4 +57,4 @@ def test_get_ltc_balance_unexpected_error(monkeypatch):
 
     monkeypatch.setattr(requests, "get", fake_get)
     balance = get_ltc_balance(address)
-    assert balance is None
+    assert balance == 0.0

@@ -36,7 +36,7 @@ def test_get_btc_balance_address_not_found(monkeypatch):
     monkeypatch.setattr(requests, "get", fake_get)
 
     balance = get_btc_balance(address)
-    assert balance is None
+    assert balance == 0.0
 
 
 def test_get_btc_balance_request_exception(monkeypatch):
@@ -46,7 +46,7 @@ def test_get_btc_balance_request_exception(monkeypatch):
     monkeypatch.setattr(requests, "get", fake_get)
 
     balance = get_btc_balance("btc_address_placeholder")
-    assert balance is None
+    assert balance == 0.0
 
 
 def test_get_btc_balance_unexpected_exception(monkeypatch):
@@ -63,4 +63,4 @@ def test_get_btc_balance_unexpected_exception(monkeypatch):
     monkeypatch.setattr(requests, "get", fake_get)
 
     balance = get_btc_balance("btc_address_placeholder")
-    assert balance is None
+    assert balance == 0.0

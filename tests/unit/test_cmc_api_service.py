@@ -1,69 +1,46 @@
-import unittest
 from unittest.mock import Mock
 import requests
+import pytest
+
 from app.services.api.cmc_api_service import CoinMarketCapAPI
 
 
-class TestCoinMarketCapAPI(unittest.TestCase):
-    def setUp(self):
-        pass
+def test_make_request_success(monkeypatch):
+    mock_response = Mock()
+    mock_response.status_code = 200
+    mock_response.text = '{"data": {"symbol": "BTC", "price": 30000}, "cached": true}'
+    mock_response.from_cache = True
+
+    api_instance = CoinMarketCapAPI(api_key="dummy_api_key")
+    monkeypatch.setattr(api_instance.session, "get", lambda *args, **kwargs: mock_response)
+
+    result = api_instance.make_request(endpoint="/test-endpoint", params={"symbol": "BTC"})
+
+    assert result == {
+        "data": {"symbol": "BTC", "price": 30000},
+        "cached": True,
+    }
 
 
-    def test_make_request_success(self, monkeypatch):
-        # Prepare mock response
-        mock_response = Mock()
-        mock_response.status_code = 200
-        mock_response.text = '{"data": {"symbol": "BTC", "price": 30000}, "cached": true}'
+def test_make_request_json_decode_error(monkeypatch):
+    mock_response = Mock()
+    mock_response.status_code = 200
+    mock_response.text = "Invalid JSON"
 
-        def mock_get(*args, **kwargs):
-            return mock_response
+    api_instance = CoinMarketCapAPI(api_key="dummy_api_key")
+    monkeypatch.setattr(api_instance.session, "get", lambda *args, **kwargs: mock_response)
 
-        # Patch the session's get method
-        api_instance = CoinMarketCapAPI(api_key="dummy_api_key")
-        monkeypatch.setattr(api_instance.session, "get", mock_get)
+    result = api_instance.make_request(endpoint="/test-endpoint", params={"symbol": "BTC"})
 
-        # Call the method
-        result = api_instance.make_request(endpoint="/test-endpoint", params={"symbol": "BTC"})
-
-        # Assertions
-        assert result == {
-            "data": {"symbol": "BTC", "price": 30000},
-            "cached": True,
-        }
+    assert result == "Invalid JSON"
 
 
-    def test_make_request_json_decode_error(self, monkeypatch):
-        # Prepare mock response with incorrect JSON
-        mock_response = Mock()
-        mock_response.status_code = 200
-        mock_response.text = "Invalid JSON"
+def test_make_request_request_exception(monkeypatch):
+    def mock_get(*args, **kwargs):
+        raise requests.RequestException("Request failed")
 
-        def mock_get(*args, **kwargs):
-            return mock_response
+    api_instance = CoinMarketCapAPI(api_key="dummy_api_key")
+    monkeypatch.setattr(api_instance.session, "get", mock_get)
 
-        # Patch the session's get method
-        api_instance = CoinMarketCapAPI(api_key="dummy_api_key")
-        monkeypatch.setattr(api_instance.session, "get", mock_get)
-
-        # Call the method
-        result = api_instance.make_request(endpoint="/test-endpoint", params={"symbol": "BTC"})
-
-        # Assertions
-        assert result == "Invalid JSON"
-
-
-    def test_make_request_request_exception(self, monkeypatch):
-        # Simulate a request exception
-        def mock_get(*args, **kwargs):
-            raise requests.RequestException("Request failed")
-
-        # Patch the session's get method
-        api_instance = CoinMarketCapAPI(api_key="dummy_api_key")
-        monkeypatch.setattr(api_instance.session, "get", mock_get)
-
-        # Call the method
-        result = api_instance.make_request(endpoint="/test-endpoint", params={"symbol": "BTC"})
-
-        # Assertions
-        assert isinstance(result, requests.RequestException)
-        assert "Request failed" in str(result)
+    with pytest.raises(requests.RequestException):
+        api_instance.make_request(endpoint="/test-endpoint", params={"symbol": "BTC"})
