@@ -99,7 +99,7 @@ class Portfolio:
 
     def export_assets(self):
         utc_now = datetime.now(timezone.utc)
-        file_timestamp = utc_now.strftime("%Y%m%d%H%M%S")
+        file_timestamp = utc_now.strftime("%Y%m%d_%H%M%S")
         data_timestamp = utc_now.strftime("%Y-%m-%d %H:%M:%S")
         directory = "data/export/" + utc_now.strftime("%Y-%m")
         style = "bold yellow"
