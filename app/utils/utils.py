@@ -1,5 +1,5 @@
 import binascii
-from datetime import datetime
+from datetime import datetime, timezone
 import dateutil.parser
 import base64
 from rich.table import Table
@@ -82,3 +82,9 @@ def show_object_attribute_table(obj: Any):
         table.add_row(key, str(val))
 
     console.print(table)
+
+
+def convert_timestamp(timestamp: float, utc: bool = False) -> datetime:
+    dt = datetime.fromtimestamp(timestamp, tz=timezone.utc) if utc else datetime.fromtimestamp(timestamp)
+
+    return dt.strftime("%Y-%m-%d %H:%M:%S")

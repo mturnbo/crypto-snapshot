@@ -1,10 +1,10 @@
-import pathlib
-
 import requests
 from datetime import datetime, timezone
 import csv
 from pathlib import Path
 from typing import Dict
+from app.utils.utils import convert_timestamp
+import pandas as pd
 
 
 class CoinGeckoAPI():
@@ -63,3 +63,19 @@ class CoinGeckoAPI():
                     writer.writerows(data)
 
         return data
+
+
+    def get_token_price_history(self, id: str, currency: str = "USD", days: int = 30) -> pd.DataFrame:
+        endpoint = f"coins/{id}/market_chart"
+        params = {
+            "vs_currency": currency,
+            "days": days,
+        }
+
+        data = self.make_request(endpoint, params)
+
+        for sublist in data['prices']:
+            sublist[0] = convert_timestamp(int(sublist[0]) / 1000),
+
+        return pd.DataFrame(data)
+
