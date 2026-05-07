@@ -2,12 +2,14 @@ import csv
 import json
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict
+from typing import TYPE_CHECKING, Any, Dict
 
-import pandas as pd
 import requests
 
 from app.utils.utils import convert_timestamp
+
+if TYPE_CHECKING:
+    import pandas as pd
 
 
 class CoinGeckoAPI():
@@ -133,16 +135,13 @@ class CoinGeckoAPI():
 
         return output
 
-    def get_token_price_history(
-        self,
-        id: str,
-        currency: str = "USD",
-        days: int = 30,
-    ) -> pd.DataFrame:
-        endpoint = f"coins/{id}/market_chart"
+    def get_token_price_history(self, token_id: str, currency: str = "USD", days: int = 30) -> "pd.DataFrame":
+        import pandas as pd
+
+        endpoint = f"coins/{token_id}/market_chart"
         params = {
             "vs_currency": currency,
-            "days": days,
+            "days": str(days),
         }
 
         data = self.make_request(endpoint, params)
