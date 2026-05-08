@@ -152,7 +152,7 @@ def test_create_symbol_id_lookup_writes_json_file(api_client, tmp_path):
         "make_request",
         return_value=payload,
     ) as mock_make_request:
-        result = api_client.create_symbol_id_lookup(
+        result = api_client.create_tokenmap(
             currency="usd",
             limit=4,
             output_path=str(output_path),
@@ -197,7 +197,7 @@ def test_create_symbol_id_lookup_fetches_multiple_pages(api_client, tmp_path):
         "make_request",
         side_effect=[page_one, page_two],
     ) as mock_make_request:
-        result = api_client.create_symbol_id_lookup(
+        result = api_client.create_tokenmap(
             limit=251,
             output_path=str(output_path),
         )

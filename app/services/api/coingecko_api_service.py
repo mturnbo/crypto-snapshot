@@ -1,11 +1,11 @@
+import os
 import csv
 import json
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict
-
+from config.settings import ROOT_DIR
 import requests
-
 from app.utils.utils import convert_timestamp
 
 if TYPE_CHECKING:
@@ -77,15 +77,12 @@ class CoinGeckoAPI():
         return data
 
 
-    def create_symbol_id_lookup(
-        self,
-        currency: str = "USD",
-        limit: int = 1000,
-        output_path: str = "data/coingecko_symbol_lookup.json",
-    ) -> Dict[str, Any]:
+    def create_tokenmap(self, currency: str = "USD", limit: int = 1000, output_path: str = None) -> Dict[str, Any]:
         endpoint = "coins/markets"
         per_page = 250
         tokens = []
+        if output_path is None:
+            output_path = os.path.join(ROOT_DIR, "config", "tokenmap.coingecko.json")
 
         for page in range(1, (limit + per_page - 1) // per_page + 1):
             params = {
@@ -134,6 +131,7 @@ class CoinGeckoAPI():
             json.dump(output, json_file, indent=2, sort_keys=True)
 
         return output
+
 
     def get_token_price_history(self, token_id: str, currency: str = "USD", days: int = 30) -> "pd.DataFrame":
         import pandas as pd

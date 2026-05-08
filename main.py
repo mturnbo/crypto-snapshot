@@ -3,6 +3,8 @@ import json
 from app.models.portfolio import Portfolio
 import argparse
 from typing import List
+
+from app.utils.blockchains.solana import refresh_solana_token_metadata
 from app.utils.env import get_env
 from app.services.api.cmc_api_service import CoinMarketCapAPI
 from app.services.api.coingecko_api_service import CoinGeckoAPI
@@ -44,18 +46,28 @@ def get_exchange_portfolios():
 def get_prices():
     api_key = get_env('COINGECKO_API_KEY')
     api_service = CoinGeckoAPI(api_key=api_key)
+    api_service.create_tokenmap()
     api_service.get_top_tokens(currency='USD', save=True)
+    
+    
+def initialize():
+    refresh_solana_token_metadata()
+    get_prices()
 
 
 if __name__ == '__main__':
     # get command line arguments
     parser = argparse.ArgumentParser(description="Crypto Portfolio Snapshot")
-    parser.add_argument("operation", choices=["scan", "save", "getprices"], help="Scan and display assets or save to CSV")
+    parser.add_argument("operation", choices=["init", "scan", "save", "getprices"], help="Scan and display assets or save to CSV")
     parser.add_argument("--wallet", type=str, required=False, help="Name of wallet to scan")
     parser.add_argument("--exchange", type=str, required=False, help="Name of exchange to scan")
     parser.add_argument("--blockchain", type=str, required=False, help="Name of blockchain to scan")
     parser.add_argument("--info", type=str, required=False, help="Name of token to get info for")
     args = parser.parse_args()
+
+    if args.operation == "init":
+        initialize()
+        exit(0)
 
     if args.operation == "getprices":
         get_prices()
